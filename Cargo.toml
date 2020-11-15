@@ -1,0 +1,15 @@
+[package]
+name = "tiny-gltf"
+version = "0.1.0"
+authors = ["Florian Amsallem <florian.amsallem@epita.fr>"]
+edition = "2018"
+license = "MIT"
+keywords = ["glTF", "3D", "asset", "model", "scene"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cgmath="0.17.0"
+gltf = {version = "0.15.2", features = ["KHR_lights_punctual"]}
+image="0.23.6"
+base64 = "0.13.0"
