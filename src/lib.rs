@@ -1,3 +1,40 @@
+#![deny(missing_docs)]
+
+//! easy-gltf
+//!
+//!  This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a
+//!  file format designed for the efficient transmission of 3D assets.
+//!
+//!  It's base on [gltf](https://github.com/gltf-rs/gltf) crate but has an easy to use output.
+//!
+//!  # Installation
+//!
+//!  ```toml
+//!  [dependencies]
+//!  easy-gltf="0.1.0"
+//!  ```
+//!
+//!  # Example
+//!
+//! ```
+//! # fn run() -> Result<(), Box<dyn std::error::Error>> {
+//!      let scenes = easy_gltf::load("tests/cube.glb")?;
+//!      for scene in scenes {
+//!          println!(
+//!              "Cameras: #{}  Lights: #{}  Models: #{}",
+//!              scene.cameras.len(),
+//!              scene.lights.len(),
+//!              scene.models.len()
+//!          )
+//!      }
+//! #     Ok(())
+//! # }
+//! #
+//! #  fn main() {
+//! #      let _ = run().expect("runtime error");
+//! #  }
+//! ```
+
 mod scene;
 mod utils;
 
@@ -7,6 +44,23 @@ use utils::GltfData;
 
 pub use scene::*;
 
+/// Load scenes from path to a glTF 2.0.
+///
+/// Note: You can use this function with either a `Gltf` (standard `glTF`) or `Glb` (binary glTF).
+///
+/// # Example
+///
+/// ```
+/// # fn run() -> Result<(), Box<dyn std::error::Error>> {
+///     let scenes = easy_gltf::load("tests/cube.glb")?;
+///     println!("Scenes: #{}", scenes.len()); // Output "Scenes: #1"
+///     let scene = &scenes[0]; // Retrieve the first and only scene
+///     println!("Cameras: #{}", scene.cameras.len());
+///     println!("Lights: #{}", scene.lights.len());
+///     println!("Models: #{}", scene.models.len());
+/// #   Ok(())
+/// # }
+/// ```
 pub fn load<P>(path: P) -> Result<Vec<Scene>>
 where
     P: AsRef<Path>,
@@ -20,7 +74,7 @@ where
     let mut res = vec![];
     let mut collection = Default::default();
     for scene in data.doc.scenes() {
-        res.push(Scene::load(scene, &data, &mut collection)?);
+        res.push(Scene::load(scene, &data, &mut collection));
     }
     Ok(res)
 }
@@ -29,6 +83,14 @@ where
 mod tests {
     use crate::*;
     use cgmath::*;
+
+    macro_rules! assert_delta {
+        ($x:expr, $y:expr, $d:expr) => {
+            if !($x - $y < $d || $y - $x < $d) {
+                panic!();
+            }
+        };
+    }
 
     #[test]
     fn check_load() {

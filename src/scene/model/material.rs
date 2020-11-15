@@ -7,6 +7,7 @@ use image::{DynamicImage, GrayImage, RgbImage, RgbaImage};
 use std::path::Path;
 use std::rc::Rc;
 
+/// Contains material properties of models.
 #[derive(Clone, Debug)]
 pub struct Material {
     /// The `base_color_factor` contains scaling factors for the red, green,

@@ -5,15 +5,6 @@ use image::{GrayImage, RgbImage, RgbaImage};
 use std::collections::HashMap;
 use std::rc::Rc;
 
-#[macro_export]
-macro_rules! assert_delta {
-    ($x:expr, $y:expr, $d:expr) => {
-        if !($x - $y < $d || $y - $x < $d) {
-            panic!();
-        }
-    };
-}
-
 /// Helps to simplify the signature of import related functions.
 pub struct GltfData {
     pub doc: gltf::Document,

@@ -1,6 +1,7 @@
 use cgmath::*;
 use gltf::khr_lights_punctual::{Kind, Light as GltfLight};
 
+/// Represents a light.
 #[derive(Clone, Debug)]
 pub enum Light {
     /// Directional lights are light sources that act as though they are
@@ -8,8 +9,11 @@ pub enum Light {
     /// an infinite distance, the light is not attenuated. Its intensity is
     /// defined in lumens per metre squared, or lux (lm/m2).
     Directional {
+        /// Direction of the directional light
         direction: Vector3<f32>,
+        /// Color of the directional light
         color: Vector3<f32>,
+        /// Intensity of the directional light
         intensity: f32,
     },
 
@@ -19,8 +23,11 @@ pub enum Light {
     /// the inverse square of the distance). Point light intensity is defined in
     /// candela, which is lumens per square radian (lm/sr).
     Point {
+        /// Position of the point light
         position: Vector3<f32>,
+        /// Color of the point light
         color: Vector3<f32>,
+        /// Intensity of the point light
         intensity: f32,
     },
 
@@ -35,11 +42,17 @@ pub enum Light {
     /// support two angles for spotlights should use outer_cone_angle as the
     /// spotlight angle (leaving `inner_cone_angle` to implicitly be `0`).
     Spot {
+        /// Position of the spot light
         position: Vector3<f32>,
+        /// Direction of the spot light
         direction: Vector3<f32>,
+        /// Color of the spot light
         color: Vector3<f32>,
+        /// Intensity of the spot light
         intensity: f32,
+        /// Inner cone angle of the spot light
         inner_cone_angle: f32,
+        /// Outer cone angle of the spot light
         outer_cone_angle: f32,
     },
 }

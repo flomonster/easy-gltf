@@ -8,9 +8,12 @@ use std::rc::Rc;
 pub use material::Material;
 pub use vertex::*;
 
+/// Geometry to be rendered with the given material
 #[derive(Clone, Debug)]
 pub struct Model {
+    /// List of triangles
     pub triangles: Vec<Triangle>,
+    /// Material applied to the whole model
     pub material: Rc<Material>,
 }
 
@@ -51,7 +54,7 @@ impl Model {
         // Fill normals
         if let Some(normals) = reader.read_normals() {
             for (i, normal) in normals.enumerate() {
-                vertices[i].normal = Self::apply_transform_vector(normal, transform);
+                vertices[i].normal = Self::apply_transform_vector(normal, transform).normalize();
             }
         }
 

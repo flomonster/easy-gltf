@@ -1,6 +1,7 @@
 use cgmath::*;
 use gltf::camera::Projection;
 
+/// Contains camera properties.
 #[derive(Clone, Debug)]
 pub struct Camera {
     /// Position of the camera

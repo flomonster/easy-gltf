@@ -1,22 +1,17 @@
 use cgmath::*;
 
+/// Represents the 3 vertices of a triangle.
 pub type Triangle = [Vertex; 3];
 
+/// Contains a position, normal and texture coordinates vectors.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Vertex {
+    /// Position
     pub position: Vector3<f32>,
+    /// Normalized normal
     pub normal: Vector3<f32>,
+    /// Texture coordinates
     pub texture: Vector2<f32>,
-}
-
-impl Vertex {
-    pub fn new(px: f32, py: f32, pz: f32, nx: f32, ny: f32, nz: f32, tx: f32, ty: f32) -> Self {
-        Vertex {
-            position: Vector3::new(px, py, pz),
-            normal: Vector3::new(nx, ny, nz),
-            texture: Vector2::new(tx, ty),
-        }
-    }
 }
 
 impl Default for Vertex {
