@@ -4,7 +4,6 @@ use cgmath::*;
 use gltf::image::Source;
 use image::*;
 use image::{DynamicImage, GrayImage, RgbImage, RgbaImage};
-use std::path::Path;
 use std::rc::Rc;
 
 /// Contains material properties of models.
@@ -77,7 +76,7 @@ impl Material {
         data: &GltfData,
         col: &mut Collection,
     ) -> Rc<Self> {
-        if let Some(material) = col.materials.get(&gltf_mat.index().unwrap()) {
+        if let Some(material) = col.materials.get(&gltf_mat.index()) {
             return material.clone();
         }
         let mut material = Self::default();
@@ -119,8 +118,7 @@ impl Material {
 
         // Add to the collection
         let material = Rc::new(material);
-        col.materials
-            .insert(gltf_mat.index().unwrap(), material.clone());
+        col.materials.insert(gltf_mat.index(), material.clone());
         material
     }
 
@@ -207,7 +205,7 @@ impl Material {
                     )
                     .unwrap()
                 } else {
-                    let path = Path::new("./").join(uri);
+                    let path = data.base_dir.join(uri);
                     open(path).unwrap()
                 }
             }

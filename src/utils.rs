@@ -3,6 +3,7 @@ use cgmath::*;
 use gltf::scene::Transform;
 use image::{GrayImage, RgbImage, RgbaImage};
 use std::collections::HashMap;
+use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 /// Helps to simplify the signature of import related functions.
@@ -10,11 +11,33 @@ pub struct GltfData {
     pub doc: gltf::Document,
     pub buffers: Vec<gltf::buffer::Data>,
     pub images: Vec<gltf::image::Data>,
+    pub base_dir: PathBuf,
+}
+
+impl GltfData {
+    pub fn new<P>(
+        doc: gltf::Document,
+        buffers: Vec<gltf::buffer::Data>,
+        images: Vec<gltf::image::Data>,
+        path: P,
+    ) -> Self
+    where
+        P: AsRef<Path>,
+    {
+        let mut base_dir = PathBuf::from(path.as_ref());
+        base_dir.pop();
+        GltfData {
+            doc,
+            buffers,
+            images,
+            base_dir,
+        }
+    }
 }
 
 #[derive(Debug, Default)]
 pub struct Collection {
-    pub materials: HashMap<usize, Rc<Material>>,
+    pub materials: HashMap<Option<usize>, Rc<Material>>,
     pub rgb_images: HashMap<usize, Rc<RgbImage>>,
     pub rgba_images: HashMap<usize, Rc<RgbaImage>>,
     pub gray_images: HashMap<usize, Rc<GrayImage>>,

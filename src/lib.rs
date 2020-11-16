@@ -1,32 +1,30 @@
 #![deny(missing_docs)]
 
-//! easy-gltf
+//! This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a
+//! file format designed for the efficient transmission of 3D assets.
 //!
-//!  This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a
-//!  file format designed for the efficient transmission of 3D assets.
+//! It's base on [gltf](https://github.com/gltf-rs/gltf) crate but has an easy to use output.
 //!
-//!  It's base on [gltf](https://github.com/gltf-rs/gltf) crate but has an easy to use output.
+//! # Installation
 //!
-//!  # Installation
+//! ```toml
+//! [dependencies]
+//! easy-gltf="0.1.0"
+//! ```
 //!
-//!  ```toml
-//!  [dependencies]
-//!  easy-gltf="0.1.0"
-//!  ```
-//!
-//!  # Example
+//! # Example
 //!
 //! ```
 //! # fn run() -> Result<(), Box<dyn std::error::Error>> {
-//!      let scenes = easy_gltf::load("tests/cube.glb")?;
-//!      for scene in scenes {
-//!          println!(
-//!              "Cameras: #{}  Lights: #{}  Models: #{}",
-//!              scene.cameras.len(),
-//!              scene.lights.len(),
-//!              scene.models.len()
-//!          )
-//!      }
+//! let scenes = easy_gltf::load("tests/cube.glb")?;
+//! for scene in scenes {
+//!     println!(
+//!         "Cameras: #{}  Lights: #{}  Models: #{}",
+//!         scene.cameras.len(),
+//!         scene.lights.len(),
+//!         scene.models.len()
+//!     )
+//! }
 //! #     Ok(())
 //! # }
 //! #
@@ -65,14 +63,15 @@ pub fn load<P>(path: P) -> Result<Vec<Scene>>
 where
     P: AsRef<Path>,
 {
-    let (doc, buffers, images) = gltf::import(path)?;
-    let data = GltfData {
-        doc,
-        buffers,
-        images,
-    };
-    let mut res = vec![];
+    // Run gltf
+    let (doc, buffers, images) = gltf::import(&path)?;
+
+    // Init data and collection useful for conversion
+    let data = GltfData::new(doc, buffers, images, &path);
     let mut collection = Default::default();
+
+    // Convert gltf -> easy_gltf
+    let mut res = vec![];
     for scene in data.doc.scenes() {
         res.push(Scene::load(scene, &data, &mut collection));
     }
@@ -81,6 +80,7 @@ where
 
 #[cfg(test)]
 mod tests {
+    use crate::model::Mode;
     use crate::*;
     use cgmath::*;
 
@@ -93,13 +93,43 @@ mod tests {
     }
 
     #[test]
-    fn check_load() {
+    fn check_cube_glb() {
         let scenes = load("tests/cube.glb").unwrap();
         assert_eq!(scenes.len(), 1);
         let scene = &scenes[0];
         assert_eq!(scene.cameras.len(), 1);
         assert_eq!(scene.lights.len(), 3);
         assert_eq!(scene.models.len(), 1);
+    }
+
+    #[test]
+    fn check_different_meshes() {
+        let scenes = load("tests/complete.glb").unwrap();
+        assert_eq!(scenes.len(), 1);
+        let scene = &scenes[0];
+        for model in scene.models.iter() {
+            match model.mode() {
+                Mode::Triangles | Mode::TriangleFan | Mode::TriangleStrip => {
+                    assert!(model.triangles().is_ok());
+                }
+                Mode::Lines | Mode::LineLoop | Mode::LineStrip => {
+                    assert!(model.lines().is_ok());
+                }
+                Mode::Points => {
+                    assert!(model.points().is_ok());
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn check_cube_gltf() {
+        let _ = load("tests/cube_classic.gltf").unwrap();
+    }
+
+    #[test]
+    fn check_default_texture() {
+        let _ = load("tests/box_sparse.glb").unwrap();
     }
 
     #[test]
@@ -156,7 +186,7 @@ mod tests {
         let scenes = load("tests/cube.glb").unwrap();
         let scene = &scenes[0];
         let model = &scene.models[0];
-        for t in model.triangles.iter().flatten() {
+        for t in model.triangles().unwrap().iter().flatten() {
             let pos = t.position;
             assert!(pos.x > -0.01 && pos.x < 1.01);
             assert!(pos.y > -0.01 && pos.y < 1.01);

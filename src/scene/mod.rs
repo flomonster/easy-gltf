@@ -1,18 +1,21 @@
 mod camera;
 mod light;
-mod model;
+/// Contains model and material
+/// # Usage
+/// Check [Model](struct.Model.html) for more information about how to use this module.
+pub mod model;
 
 use crate::utils::*;
 use crate::GltfData;
 pub use camera::Camera;
 pub use light::Light;
-pub use model::*;
+pub use model::{Material, Model};
 
 use cgmath::*;
 use gltf::scene::Node;
 
 /// Contains cameras, models and lights of a scene.
-#[derive(Clone, Debug)]
+#[derive(Default, Clone, Debug)]
 pub struct Scene {
     /// List of models in the scene
     pub models: Vec<Model>,
@@ -62,16 +65,6 @@ impl Scene {
                 self.models
                     .push(Model::load(primitive, &transform, data, col));
             }
-        }
-    }
-}
-
-impl Default for Scene {
-    fn default() -> Self {
-        Scene {
-            models: vec![],
-            cameras: vec![],
-            lights: vec![],
         }
     }
 }

@@ -28,16 +28,12 @@ pub struct Camera {
 
 impl Camera {
     pub(crate) fn load(gltf_cam: gltf::Camera, transform: &Matrix4<f32>) -> Self {
-        let mut cam = Camera {
-            position: Vector3::new(transform[3][0], transform[3][1], transform[3][2]),
-            right: Vector3::new(transform[0][0], transform[0][1], transform[0][2]).normalize(),
-            up: Vector3::new(transform[1][0], transform[1][1], transform[1][2]).normalize(),
-            forward: -1.
-                * Vector3::new(transform[2][0], transform[2][1], transform[2][2]).normalize(),
-            fov: Rad(90.0),
-            zfar: 0.,
-            znear: 0.,
-        };
+        let mut cam = Self::default();
+        cam.position = Vector3::new(transform[3][0], transform[3][1], transform[3][2]);
+        cam.right = Vector3::new(transform[0][0], transform[0][1], transform[0][2]).normalize();
+        cam.up = Vector3::new(transform[1][0], transform[1][1], transform[1][2]).normalize();
+        cam.forward =
+            -1. * Vector3::new(transform[2][0], transform[2][1], transform[2][2]).normalize();
         match gltf_cam.projection() {
             Projection::Orthographic(ortho) => {
                 cam.zfar = ortho.zfar();
@@ -50,5 +46,19 @@ impl Camera {
             }
         };
         cam
+    }
+}
+
+impl Default for Camera {
+    fn default() -> Self {
+        Camera {
+            position: Vector3::zero(),
+            right: Vector3::new(1., 0., 0.),
+            up: Vector3::new(0., 1., 0.),
+            forward: Vector3::new(0., 0., -1.),
+            fov: Rad(0.399),
+            zfar: f32::INFINITY,
+            znear: 0.,
+        }
     }
 }
