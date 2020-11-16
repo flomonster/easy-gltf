@@ -9,6 +9,7 @@ homepage = "https://github.com/flomonster/easy-gltf"
 edition = "2018"
 license = "MIT"
 keywords = ["glTF", "3D", "asset", "model", "scene"]
+exclude = [".github/"]
 
 [dependencies]
 cgmath="0.17.0"
