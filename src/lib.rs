@@ -36,7 +36,7 @@
 mod scene;
 mod utils;
 
-use gltf::Result;
+use std::error::Error;
 use std::path::Path;
 use utils::GltfData;
 
@@ -59,7 +59,7 @@ pub use scene::*;
 /// #   Ok(())
 /// # }
 /// ```
-pub fn load<P>(path: P) -> Result<Vec<Scene>>
+pub fn load<P>(path: P) -> Result<Vec<Scene>, Box<dyn Error>>
 where
     P: AsRef<Path>,
 {
