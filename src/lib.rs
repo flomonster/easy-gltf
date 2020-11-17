@@ -137,7 +137,7 @@ mod tests {
         let scenes = load("tests/cube.glb").unwrap();
         let scene = &scenes[0];
         let cam = &scene.cameras[0];
-        assert!((cam.position - Vector3::new(7.3589, 4.9583, 6.9258)).magnitude() < 0.1);
+        assert!((cam.position() - Vector3::new(7.3589, 4.9583, 6.9258)).magnitude() < 0.1);
     }
 
     #[test]
