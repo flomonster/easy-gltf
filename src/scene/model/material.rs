@@ -43,7 +43,7 @@ pub struct Material {
     ///
     /// * Red [0 to 255] maps to X [-1 to 1].
     /// * Green [0 to 255] maps to Y [-1 to 1].
-    /// * Blue [128 to 255] maps to Z [1/255 to 1].
+    /// * Blue [0 to 255] maps to Z [-1 to 1].
     ///
     /// The normal vectors use OpenGL conventions where +X is right, +Y is up,
     /// and +Z points toward the viewer.
@@ -71,6 +71,120 @@ pub struct Material {
 }
 
 impl Material {
+    /// Get the color base Rgb(A) (in RGB-color space) of the material given a
+    /// texture coordinate. If no `base_color_texture` is available then the
+    /// `base_color_factor` is returned.
+    ///
+    /// **Important**: `tex_coords` must contain values between `[0., 1.]`
+    /// otherwise the function will fail.
+    pub fn get_base_color(&self, tex_coords: Vector2<f32>) -> Vector4<f32> {
+        let mut res = self.base_color_factor;
+        if let Some(texture) = &self.base_color_texture {
+            let coords = tex_coords.mul_element_wise(Vector2::new(
+                texture.width() as f32,
+                texture.height() as f32,
+            ));
+            let pixel = texture[(coords.x as u32, coords.y as u32)];
+            for i in 0..4 {
+                res[i] *= (pixel[i] as f32) / 255.;
+            }
+        }
+        res
+    }
+
+    /// Get the metallic value of the material given a texture coordinate. If no
+    /// `metallic_texture` is available then the `metallic_factor` is returned.
+    ///
+    /// **Important**: `tex_coords` must contain values between `[0., 1.]`
+    /// otherwise the function will fail.
+    pub fn get_metallic(&self, tex_coords: Vector2<f32>) -> f32 {
+        self.metallic_factor
+            * if let Some(texture) = &self.metallic_texture {
+                let coords = tex_coords.mul_element_wise(Vector2::new(
+                    texture.width() as f32,
+                    texture.height() as f32,
+                ));
+                (texture[(coords.x as u32, coords.y as u32)][0] as f32) / 255.
+            } else {
+                1.
+            }
+    }
+
+    /// Get the roughness value of the material given a texture coordinate. If no
+    /// `roughness_texture` is available then the `roughness_factor` is returned.
+    ///
+    /// **Important**: `tex_coords` must contain values between `[0., 1.]`
+    /// otherwise the function will fail.
+    pub fn get_roughness(&self, tex_coords: Vector2<f32>) -> f32 {
+        self.roughness_factor
+            * if let Some(texture) = &self.roughness_texture {
+                let coords = tex_coords.mul_element_wise(Vector2::new(
+                    texture.width() as f32,
+                    texture.height() as f32,
+                ));
+                (texture[(coords.x as u32, coords.y as u32)][0] as f32) / 255.
+            } else {
+                1.
+            }
+    }
+
+    /// Get the normal vector of the material given a texture coordinate. If no
+    /// `normal_texture` is available then `None` is returned.
+    ///
+    /// **Important**: `tex_coords` must contain values between `[0., 1.]`
+    /// otherwise the function will fail.
+    pub fn get_normal(&self, tex_coords: Vector2<f32>) -> Option<Vector3<f32>> {
+        let texture = self.normal_texture.as_ref()?;
+        let coords = tex_coords.mul_element_wise(Vector2::new(
+            texture.width() as f32,
+            texture.height() as f32,
+        ));
+        let pixel = texture[(coords.x as u32, coords.y as u32)];
+        Some(
+            self.normal_factor
+                * Vector3::new(
+                    (pixel[0] as f32) / 127.5 - 1.,
+                    (pixel[1] as f32) / 127.5 - 1.,
+                    (pixel[2] as f32) / 127.5 - 1.,
+                ),
+        )
+    }
+
+    /// Get the occlusion value of the material given a texture coordinate. If no
+    /// `occlusion_texture` is available then `None` is returned.
+    ///
+    /// **Important**: `tex_coords` must contain values between `[0., 1.]`
+    /// otherwise the function will fail.
+    pub fn get_occlusion(&self, tex_coords: Vector2<f32>) -> Option<f32> {
+        let texture = self.occlusion_texture.as_ref()?;
+        let coords = tex_coords.mul_element_wise(Vector2::new(
+            texture.width() as f32,
+            texture.height() as f32,
+        ));
+        Some(self.occlusion_factor * (texture[(coords.x as u32, coords.y as u32)][0] as f32) / 255.)
+    }
+
+    /// Get the emissive color Rgb of the material given a texture coordinate.
+    /// If no `emissive_texture` is available then the `emissive_factor` is
+    /// returned.
+    ///
+    /// **Important**: `tex_coords` must contain values between `[0., 1.]`
+    /// otherwise the function will fail.
+    pub fn get_emissive(&self, tex_coords: Vector2<f32>) -> Vector3<f32> {
+        let mut res = self.emissive_factor;
+        if let Some(texture) = &self.emissive_texture {
+            let coords = tex_coords.mul_element_wise(Vector2::new(
+                texture.width() as f32,
+                texture.height() as f32,
+            ));
+            let pixel = texture[(coords.x as u32, coords.y as u32)];
+            for i in 0..3 {
+                res[i] *= (pixel[i] as f32) / 255.;
+            }
+        }
+        res
+    }
+
     pub(crate) fn load(
         gltf_mat: gltf::Material,
         data: &GltfData,
