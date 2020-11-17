@@ -4,7 +4,7 @@ mod vertex;
 
 use crate::utils::*;
 use cgmath::*;
-use std::rc::Rc;
+use std::sync::Arc;
 
 pub use material::Material;
 pub use mode::*;
@@ -66,12 +66,12 @@ pub struct Model {
     pub(crate) vertices: Vec<Vertex>,
     pub(crate) indices: Option<Vec<usize>>,
     pub(crate) mode: Mode,
-    pub(crate) material: Rc<Material>,
+    pub(crate) material: Arc<Material>,
 }
 
 impl Model {
     /// Material to apply to the whole model.
-    pub fn material(&self) -> Rc<Material> {
+    pub fn material(&self) -> Arc<Material> {
         self.material.clone()
     }
 

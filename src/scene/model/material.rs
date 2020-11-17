@@ -4,7 +4,7 @@ use cgmath::*;
 use gltf::image::Source;
 use image::*;
 use image::{DynamicImage, GrayImage, RgbImage, RgbaImage};
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// Contains material properties of models.
 #[derive(Clone, Debug)]
@@ -16,13 +16,13 @@ pub struct Material {
 
     /// The `base_color_texture` is the main texture that will be applied to the
     /// object.
-    pub base_color_texture: Option<Rc<RgbaImage>>,
+    pub base_color_texture: Option<Arc<RgbaImage>>,
 
     /// The alpha cutoff value of the material.
     pub alpha_cutoff: f32,
 
     /// Contains the metalness value
-    pub metallic_texture: Option<Rc<GrayImage>>,
+    pub metallic_texture: Option<Arc<GrayImage>>,
 
     /// `metallic_factor` is multiply to the `metallic_texture` value. If no
     /// texture is given, then the factor define the metalness for the whole
@@ -30,7 +30,7 @@ pub struct Material {
     pub metallic_factor: f32,
 
     /// Contains the roughness value
-    pub roughness_texture: Option<Rc<GrayImage>>,
+    pub roughness_texture: Option<Arc<GrayImage>>,
 
     /// `roughness_factor` is multiply to the `roughness_texture` value. If no
     /// texture is given, then the factor define the roughness for the whole
@@ -47,7 +47,7 @@ pub struct Material {
     ///
     /// The normal vectors use OpenGL conventions where +X is right, +Y is up,
     /// and +Z points toward the viewer.
-    pub normal_texture: Option<Rc<RgbImage>>,
+    pub normal_texture: Option<Arc<RgbImage>>,
 
     /// The `normal_factor` is the normal strength to be applied to the
     /// texture value.
@@ -55,7 +55,7 @@ pub struct Material {
 
     /// The `occlusion_texture` refers to a texture that defines areas of the
     /// surface that are occluded from light, and thus rendered darker.
-    pub occlusion_texture: Option<Rc<GrayImage>>,
+    pub occlusion_texture: Option<Arc<GrayImage>>,
 
     /// The `occlusion_factor` is the occlusion strength to be applied to the
     /// texture value.
@@ -67,7 +67,7 @@ pub struct Material {
 
     /// The `emissive_texture` refers to a texture that may be used to illuminate parts of the
     /// model surface: It defines the color of the light that is emitted from the surface
-    pub emissive_texture: Option<Rc<RgbImage>>,
+    pub emissive_texture: Option<Arc<RgbImage>>,
 }
 
 impl Material {
@@ -75,7 +75,7 @@ impl Material {
         gltf_mat: gltf::Material,
         data: &GltfData,
         col: &mut Collection,
-    ) -> Rc<Self> {
+    ) -> Arc<Self> {
         if let Some(material) = col.materials.get(&gltf_mat.index()) {
             return material.clone();
         }
@@ -117,7 +117,7 @@ impl Material {
         }
 
         // Add to the collection
-        let material = Rc::new(material);
+        let material = Arc::new(material);
         col.materials.insert(gltf_mat.index(), material.clone());
         material
     }
@@ -126,11 +126,11 @@ impl Material {
         texture: &gltf::Texture<'_>,
         data: &GltfData,
         col: &mut Collection,
-    ) -> Rc<RgbImage> {
+    ) -> Arc<RgbImage> {
         if let Some(image) = col.rgb_images.get(&texture.index()) {
             return image.clone();
         }
-        let img = Rc::new(Self::load_texture(&texture, data).to_rgb());
+        let img = Arc::new(Self::load_texture(&texture, data).to_rgb());
         col.rgb_images.insert(texture.index(), img.clone());
         img
     }
@@ -139,11 +139,11 @@ impl Material {
         texture: &gltf::Texture<'_>,
         data: &GltfData,
         col: &mut Collection,
-    ) -> Rc<RgbaImage> {
+    ) -> Arc<RgbaImage> {
         if let Some(image) = col.rgba_images.get(&texture.index()) {
             return image.clone();
         }
-        let img = Rc::new(Self::load_texture(&texture, data).to_rgba());
+        let img = Arc::new(Self::load_texture(&texture, data).to_rgba());
         col.rgba_images.insert(texture.index(), img.clone());
         img
     }
@@ -153,7 +153,7 @@ impl Material {
         data: &GltfData,
         col: &mut Collection,
         channel: usize,
-    ) -> Rc<GrayImage> {
+    ) -> Arc<GrayImage> {
         if let Some(image) = col.gray_images.get(&texture.index()) {
             return image.clone();
         }
@@ -162,7 +162,7 @@ impl Material {
         for (x, y, px) in img.enumerate_pixels() {
             extract_img[(x, y)][0] = px[channel];
         }
-        let img = Rc::new(extract_img);
+        let img = Arc::new(extract_img);
         col.gray_images.insert(texture.index(), img.clone());
         img
     }

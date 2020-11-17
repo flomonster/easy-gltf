@@ -4,7 +4,7 @@ use gltf::scene::Transform;
 use image::{GrayImage, RgbImage, RgbaImage};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// Helps to simplify the signature of import related functions.
 pub struct GltfData {
@@ -37,10 +37,10 @@ impl GltfData {
 
 #[derive(Debug, Default)]
 pub struct Collection {
-    pub materials: HashMap<Option<usize>, Rc<Material>>,
-    pub rgb_images: HashMap<usize, Rc<RgbImage>>,
-    pub rgba_images: HashMap<usize, Rc<RgbaImage>>,
-    pub gray_images: HashMap<usize, Rc<GrayImage>>,
+    pub materials: HashMap<Option<usize>, Arc<Material>>,
+    pub rgb_images: HashMap<usize, Arc<RgbImage>>,
+    pub rgba_images: HashMap<usize, Arc<RgbaImage>>,
+    pub gray_images: HashMap<usize, Arc<GrayImage>>,
 }
 
 pub fn transform_to_matrix(transform: Transform) -> Matrix4<f32> {
