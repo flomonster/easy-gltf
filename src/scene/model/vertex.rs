@@ -13,8 +13,10 @@ pub struct Vertex {
     pub position: Vector3<f32>,
     /// Normalized normal
     pub normal: Vector3<f32>,
+    /// Tangent normal
+    pub tangent: Vector4<f32>,
     /// Texture coordinates
-    pub texture: Vector2<f32>,
+    pub tex_coords: Vector2<f32>,
 }
 
 impl Default for Vertex {
@@ -22,7 +24,8 @@ impl Default for Vertex {
         Vertex {
             position: Zero::zero(),
             normal: Zero::zero(),
-            texture: Zero::zero(),
+            tangent: Zero::zero(),
+            tex_coords: Zero::zero(),
         }
     }
 }

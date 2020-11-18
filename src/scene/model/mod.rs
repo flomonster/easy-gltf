@@ -67,6 +67,9 @@ pub struct Model {
     pub(crate) indices: Option<Vec<usize>>,
     pub(crate) mode: Mode,
     pub(crate) material: Arc<Material>,
+    pub(crate) has_normals: bool,
+    pub(crate) has_tangents: bool,
+    pub(crate) has_tex_coords: bool,
 }
 
 impl Model {
@@ -191,15 +194,46 @@ impl Model {
         }
     }
 
+    /// Indicate if the vertices contains normal information.
+    ///
+    /// **Note**: If this function return `false` all vertices has a normal field
+    /// initialized to `zero`.
+    pub fn has_normals(&self) -> bool {
+        self.has_normals
+    }
+
+    /// Indicate if the vertices contains tangents information.
+    ///
+    /// **Note**: If this function return `false` all vertices has a tangent field
+    /// initialized to `zero`.
+    pub fn has_tangents(&self) -> bool {
+        self.has_tangents
+    }
+
+    /// Indicate if the vertices contains texture coordinates information.
+    ///
+    /// **Note**: If this function return `false` all vertices has a tex_coord field
+    /// initialized to `zero`.
+    pub fn has_tex_coords(&self) -> bool {
+        self.has_tex_coords
+    }
+
     fn apply_transform_position(pos: [f32; 3], transform: &Matrix4<f32>) -> Vector3<f32> {
         let pos = Vector4::new(pos[0], pos[1], pos[2], 1.);
         let res = transform * pos;
         Vector3::new(res.x / res.w, res.y / res.w, res.z / res.w)
     }
 
-    fn apply_transform_vector(pos: [f32; 3], transform: &Matrix4<f32>) -> Vector3<f32> {
-        let pos = Vector4::new(pos[0], pos[1], pos[2], 0.);
-        (transform * pos).truncate()
+    fn apply_transform_vector(vec: [f32; 3], transform: &Matrix4<f32>) -> Vector3<f32> {
+        let vec = Vector4::new(vec[0], vec[1], vec[2], 0.);
+        (transform * vec).truncate()
+    }
+
+    fn apply_transform_tangent(tangent: [f32; 4], transform: &Matrix4<f32>) -> Vector4<f32> {
+        let tang = Vector4::new(tangent[0], tangent[1], tangent[2], 0.);
+        let mut tang = transform * tang;
+        tang[3] = tangent[3];
+        tang
     }
 
     pub(crate) fn load(
@@ -227,24 +261,43 @@ impl Model {
             .collect();
 
         // Fill normals
-        if let Some(normals) = reader.read_normals() {
+        let has_normals = if let Some(normals) = reader.read_normals() {
             for (i, normal) in normals.enumerate() {
                 vertices[i].normal = Self::apply_transform_vector(normal, transform).normalize();
             }
-        }
+            true
+        } else {
+            false
+        };
+
+        // Fill tangents
+        let has_tangents = if let Some(tangents) = reader.read_tangents() {
+            for (i, tangent) in tangents.enumerate() {
+                vertices[i].tangent = Self::apply_transform_tangent(tangent, transform).normalize();
+            }
+            true
+        } else {
+            false
+        };
 
         // Texture coordinates
-        if let Some(tex_coords) = reader.read_tex_coords(0) {
-            for (i, tex_coord) in tex_coords.into_f32().enumerate() {
-                vertices[i].texture = Vector2::from(tex_coord);
+        let has_tex_coords = if let Some(tex_coords) = reader.read_tex_coords(0) {
+            for (i, tex_coords) in tex_coords.into_f32().enumerate() {
+                vertices[i].tex_coords = Vector2::from(tex_coords);
             }
-        }
+            true
+        } else {
+            false
+        };
 
         Model {
             vertices,
             indices,
             material: Material::load(primitive.material(), data, col),
             mode: primitive.mode().into(),
+            has_normals,
+            has_tangents,
+            has_tex_coords,
         }
     }
 }

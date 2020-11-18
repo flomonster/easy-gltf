@@ -186,6 +186,9 @@ mod tests {
         let scenes = load("tests/cube.glb").unwrap();
         let scene = &scenes[0];
         let model = &scene.models[0];
+        assert!(model.has_normals());
+        assert!(model.has_tex_coords());
+        assert!(!model.has_tangents());
         for t in model.triangles().unwrap().iter().flatten() {
             let pos = t.position;
             assert!(pos.x > -0.01 && pos.x < 1.01);
