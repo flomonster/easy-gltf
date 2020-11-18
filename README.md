@@ -14,13 +14,15 @@
 </p>
 <hr>
 
-This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a file format designed for the efficient transmission of 3D assets.
+This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a file format designed for efficient transmission of 3D assets.
 
-It's base on [gltf](https://github.com/gltf-rs/gltf) crate but has an easy to use output.
+It's based on the [gltf](https://github.com/gltf-rs/gltf) crate but has an easy to use output.
+
+This crate is perfect for your rendering projects (raytracer, OpenGL, rasterizer...).
 
 ### Installation
 
-To install simply add the dependence in your `Cargo.toml`.
+To install it, just add the dependency in your `Cargo.toml`.
 
 ```toml
 [dependencies]
@@ -29,4 +31,4 @@ easy-gltf="0.1.0"
 
 ### Usage
 
-See the [crate documentation](https://docs.rs/easy-gltf) for example usage.
+For examples of use see the [crate documentation](https://docs.rs/easy-gltf).
