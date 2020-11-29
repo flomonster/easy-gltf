@@ -40,7 +40,7 @@ pub struct Collection {
     pub materials: HashMap<Option<usize>, Arc<Material>>,
     pub rgb_images: HashMap<usize, Arc<RgbImage>>,
     pub rgba_images: HashMap<usize, Arc<RgbaImage>>,
-    pub gray_images: HashMap<usize, Arc<GrayImage>>,
+    pub gray_images: HashMap<(usize, usize), Arc<GrayImage>>,
 }
 
 pub fn transform_to_matrix(transform: Transform) -> Matrix4<f32> {

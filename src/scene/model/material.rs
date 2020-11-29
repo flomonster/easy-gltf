@@ -272,7 +272,7 @@ impl Material {
         col: &mut Collection,
         channel: usize,
     ) -> Arc<GrayImage> {
-        if let Some(image) = col.gray_images.get(&texture.index()) {
+        if let Some(image) = col.gray_images.get(&(texture.index(), channel)) {
             return image.clone();
         }
         let img = Self::load_texture(&texture, data).to_rgba();
@@ -281,7 +281,8 @@ impl Material {
             extract_img[(x, y)][0] = px[channel];
         }
         let img = Arc::new(extract_img);
-        col.gray_images.insert(texture.index(), img.clone());
+        col.gray_images
+            .insert((texture.index(), channel), img.clone());
         img
     }
 
