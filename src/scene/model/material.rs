@@ -47,7 +47,7 @@ pub struct Material {
     ///
     /// * Red [0 to 255] maps to X [-1 to 1].
     /// * Green [0 to 255] maps to Y [-1 to 1].
-    /// * Blue [0 to 255] maps to Z [-1 to 1].
+    /// * Blue [128 to 255] maps to Z [1/255 to 1].
     ///
     /// The normal vectors use OpenGL conventions where +X is right, +Y is up,
     /// and +Z points toward the viewer.
