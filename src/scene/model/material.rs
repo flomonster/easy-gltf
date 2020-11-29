@@ -248,7 +248,7 @@ impl Material {
         if let Some(image) = col.rgb_images.get(&texture.index()) {
             return image.clone();
         }
-        let img = Arc::new(Self::load_texture(&texture, data).to_rgb());
+        let img = Arc::new(Self::load_texture(&texture, data).to_rgb8());
         col.rgb_images.insert(texture.index(), img.clone());
         img
     }
@@ -261,7 +261,7 @@ impl Material {
         if let Some(image) = col.rgba_images.get(&texture.index()) {
             return image.clone();
         }
-        let img = Arc::new(Self::load_texture(&texture, data).to_rgba());
+        let img = Arc::new(Self::load_texture(&texture, data).to_rgba8());
         col.rgba_images.insert(texture.index(), img.clone());
         img
     }
@@ -275,7 +275,7 @@ impl Material {
         if let Some(image) = col.gray_images.get(&(texture.index(), channel)) {
             return image.clone();
         }
-        let img = Self::load_texture(&texture, data).to_rgba();
+        let img = Self::load_texture(&texture, data).to_rgba8();
         let mut extract_img = GrayImage::new(img.width(), img.height());
         for (x, y, px) in img.enumerate_pixels() {
             extract_img[(x, y)][0] = px[channel];

@@ -14,5 +14,5 @@ exclude = [".github/"]
 [dependencies]
 cgmath="0.17.0"
 gltf = {version = "0.15.2", features = ["KHR_lights_punctual"]}
-image="0.23.6"
+image="0.23.12"
 base64 = "0.13.0"
