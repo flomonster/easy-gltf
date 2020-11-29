@@ -12,10 +12,14 @@ pub struct Material {
     /// The `base_color_factor` contains scaling factors for the red, green,
     /// blue and alpha component of the color. If no texture is used, these
     /// values will define the color of the whole object.
+    ///
+    /// Note that the RGB(A) components are in **sRGB** color space.
     pub base_color_factor: Vector4<f32>,
 
     /// The `base_color_texture` is the main texture that will be applied to the
     /// object.
+    ///
+    /// The texture contains RGB(A) components in **sRGB** color space.
     pub base_color_texture: Option<Arc<RgbaImage>>,
 
     /// The alpha cutoff value of the material.
