@@ -11,9 +11,7 @@ use std::sync::Arc;
 pub struct Material {
     /// The `base_color_factor` contains scaling factors for the red, green,
     /// blue and alpha component of the color. If no texture is used, these
-    /// values will define the color of the whole object.
-    ///
-    /// Note that the RGB(A) components are in **sRGB** color space.
+    /// values will define the color of the whole object in **RGB** color space.
     pub base_color_factor: Vector4<f32>,
 
     /// The `base_color_texture` is the main texture that will be applied to the
@@ -81,19 +79,37 @@ impl Material {
     ///
     /// **Important**: `tex_coords` must contain values between `[0., 1.]`
     /// otherwise the function will fail.
-    pub fn get_base_color(&self, tex_coords: Vector2<f32>) -> Vector4<f32> {
+    pub fn get_base_color_alpha(&self, tex_coords: Vector2<f32>) -> Vector4<f32> {
         let mut res = self.base_color_factor;
         if let Some(texture) = &self.base_color_texture {
             let coords = tex_coords.mul_element_wise(Vector2::new(
                 texture.width() as f32,
                 texture.height() as f32,
             ));
-            let pixel = texture[(coords.x as u32, coords.y as u32)];
+            let px_u = texture[(coords.x as u32, coords.y as u32)];
+            // Transform to float
+            let mut px_f = Vector4::new(0., 0., 0., 0.);
             for i in 0..4 {
-                res[i] *= (pixel[i] as f32) / 255.;
+                px_f[i] = (px_u[i] as f32) / 255.;
+            }
+            // Convert sRGB to RGB
+            let pixel = Vector4::new(px_f.x.powf(2.2), px_f.y.powf(2.2), px_f.z.powf(2.2), px_f.w);
+            // Multiply to the scale factor
+            for i in 0..4 {
+                res[i] *= pixel[i];
             }
         }
         res
+    }
+
+    /// Get the color base Rgb (in RGB-color space) of the material given a
+    /// texture coordinate. If no `base_color_texture` is available then the
+    /// `base_color_factor` is returned.
+    ///
+    /// **Important**: `tex_coords` must contain values between `[0., 1.]`
+    /// otherwise the function will fail.
+    pub fn get_base_color(&self, tex_coords: Vector2<f32>) -> Vector3<f32> {
+        self.get_base_color_alpha(tex_coords).truncate()
     }
 
     /// Get the metallic value of the material given a texture coordinate. If no
