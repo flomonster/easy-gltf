@@ -5,7 +5,7 @@ mod light;
 /// Check [Model](struct.Model.html) for more information about how to use this module.
 pub mod model;
 
-use crate::utils::*;
+use crate::utils::transform_to_matrix;
 use crate::GltfData;
 pub use camera::Camera;
 pub use light::Light;
@@ -26,27 +26,21 @@ pub struct Scene {
 }
 
 impl Scene {
-    pub(crate) fn load(gltf_scene: gltf::Scene, data: &GltfData, col: &mut Collection) -> Self {
+    pub(crate) fn load(gltf_scene: gltf::Scene, data: &mut GltfData) -> Self {
         let mut scene = Self::default();
         for node in gltf_scene.nodes() {
-            scene.read_node(&node, &One::one(), data, col);
+            scene.read_node(&node, &One::one(), data);
         }
         scene
     }
 
-    fn read_node(
-        &mut self,
-        node: &Node,
-        parent_transform: &Matrix4<f32>,
-        data: &GltfData,
-        col: &mut Collection,
-    ) {
+    fn read_node(&mut self, node: &Node, parent_transform: &Matrix4<f32>, data: &mut GltfData) {
         // Compute transform of the current node
         let transform = parent_transform * transform_to_matrix(node.transform());
 
         // Recurse on children
         for child in node.children() {
-            self.read_node(&child, &transform, data, col);
+            self.read_node(&child, &transform, data);
         }
 
         // Load camera
@@ -62,8 +56,7 @@ impl Scene {
         // Load model
         if let Some(mesh) = node.mesh() {
             for primitive in mesh.primitives() {
-                self.models
-                    .push(Model::load(primitive, &transform, data, col));
+                self.models.push(Model::load(primitive, &transform, data));
             }
         }
     }

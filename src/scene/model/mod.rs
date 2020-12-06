@@ -6,7 +6,7 @@ use crate::utils::*;
 use cgmath::*;
 use std::sync::Arc;
 
-pub use material::Material;
+pub use material::*;
 pub use mode::*;
 pub use vertex::*;
 
@@ -239,8 +239,7 @@ impl Model {
     pub(crate) fn load(
         primitive: gltf::Primitive,
         transform: &Matrix4<f32>,
-        data: &GltfData,
-        col: &mut Collection,
+        data: &mut GltfData,
     ) -> Self {
         let buffers = &data.buffers;
         let reader = primitive.reader(|buffer| Some(&buffers[buffer.index()]));
@@ -293,7 +292,7 @@ impl Model {
         Model {
             vertices,
             indices,
-            material: Material::load(primitive.material(), data, col),
+            material: Material::load(primitive.material(), data),
             mode: primitive.mode().into(),
             has_normals,
             has_tangents,

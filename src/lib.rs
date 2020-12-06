@@ -67,13 +67,12 @@ where
     let (doc, buffers, images) = gltf::import(&path)?;
 
     // Init data and collection useful for conversion
-    let data = GltfData::new(doc, buffers, images, &path);
-    let mut collection = Default::default();
+    let mut data = GltfData::new(buffers, images, &path);
 
     // Convert gltf -> easy_gltf
     let mut res = vec![];
-    for scene in data.doc.scenes() {
-        res.push(Scene::load(scene, &data, &mut collection));
+    for scene in doc.scenes() {
+        res.push(Scene::load(scene, &mut data));
     }
     Ok(res)
 }
@@ -202,8 +201,8 @@ mod tests {
         let scenes = load("tests/head.glb").unwrap();
         let scene = &scenes[0];
         let mat = &scene.models[0].material;
-        assert!(mat.base_color_texture.is_some());
-        assert_eq!(mat.metallic_factor, 0.);
+        assert!(mat.pbr.base_color_texture.is_some());
+        assert_eq!(mat.pbr.metallic_factor, 0.);
     }
 
     #[test]
