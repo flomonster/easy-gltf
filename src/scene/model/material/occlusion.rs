@@ -1,4 +1,3 @@
-use super::Mapper;
 use crate::utils::GltfData;
 use image::GrayImage;
 use std::sync::Arc;
@@ -13,9 +12,6 @@ pub struct Occlusion {
     /// The `occlusion_factor` is the occlusion strength to be applied to the
     /// texture value.
     pub factor: f32,
-
-    /// Mapper to apply a scale and offset on textures.
-    pub mapper: Mapper,
 }
 
 impl Occlusion {
@@ -24,7 +20,6 @@ impl Occlusion {
             Some(texture) => Some(Self {
                 texture: data.load_gray_image(&texture.texture(), 0),
                 factor: texture.strength(),
-                mapper: Default::default(), // TODO Implem it
             }),
             None => None,
         }

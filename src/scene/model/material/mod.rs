@@ -1,15 +1,15 @@
 mod emissive;
-mod mapper;
 mod normal;
 mod occlusion;
 mod pbr;
 
 use crate::utils::*;
 use cgmath::*;
+use core::ops::Deref;
+use image::{ImageBuffer, Pixel};
 use std::sync::Arc;
 
 pub use emissive::Emissive;
-pub use mapper::Mapper;
 pub use normal::NormalMap;
 pub use occlusion::Occlusion;
 pub use pbr::PbrMaterial;
@@ -41,11 +41,7 @@ impl Material {
     pub fn get_base_color_alpha(&self, tex_coords: Vector2<f32>) -> Vector4<f32> {
         let mut res = self.pbr.base_color_factor;
         if let Some(texture) = &self.pbr.base_color_texture {
-            let coords = tex_coords.mul_element_wise(Vector2::new(
-                texture.width() as f32,
-                texture.height() as f32,
-            ));
-            let px_u = texture[(coords.x as u32, coords.y as u32)];
+            let px_u = Self::get_pixel(tex_coords, texture);
             // Transform to float
             let mut px_f = Vector4::new(0., 0., 0., 0.);
             for i in 0..4 {
@@ -79,11 +75,7 @@ impl Material {
     pub fn get_metallic(&self, tex_coords: Vector2<f32>) -> f32 {
         self.pbr.metallic_factor
             * if let Some(texture) = &self.pbr.metallic_texture {
-                let coords = tex_coords.mul_element_wise(Vector2::new(
-                    texture.width() as f32,
-                    texture.height() as f32,
-                ));
-                (texture[(coords.x as u32, coords.y as u32)][0] as f32) / 255.
+                Self::get_pixel(tex_coords, texture)[0] as f32 / 255.
             } else {
                 1.
             }
@@ -97,11 +89,7 @@ impl Material {
     pub fn get_roughness(&self, tex_coords: Vector2<f32>) -> f32 {
         self.pbr.roughness_factor
             * if let Some(texture) = &self.pbr.roughness_texture {
-                let coords = tex_coords.mul_element_wise(Vector2::new(
-                    texture.width() as f32,
-                    texture.height() as f32,
-                ));
-                (texture[(coords.x as u32, coords.y as u32)][0] as f32) / 255.
+                Self::get_pixel(tex_coords, texture)[0] as f32 / 255.
             } else {
                 1.
             }
@@ -114,11 +102,7 @@ impl Material {
     /// otherwise the function will fail.
     pub fn get_normal(&self, tex_coords: Vector2<f32>) -> Option<Vector3<f32>> {
         let normal = self.normal.as_ref()?;
-        let coords = tex_coords.mul_element_wise(Vector2::new(
-            normal.texture.width() as f32,
-            normal.texture.height() as f32,
-        ));
-        let pixel = normal.texture[(coords.x as u32, coords.y as u32)];
+        let pixel = Self::get_pixel(tex_coords, &normal.texture);
         Some(
             normal.factor
                 * Vector3::new(
@@ -136,14 +120,7 @@ impl Material {
     /// otherwise the function will fail.
     pub fn get_occlusion(&self, tex_coords: Vector2<f32>) -> Option<f32> {
         let occlusion = self.occlusion.as_ref()?;
-        let coords = tex_coords.mul_element_wise(Vector2::new(
-            occlusion.texture.width() as f32,
-            occlusion.texture.height() as f32,
-        ));
-        Some(
-            occlusion.factor * (occlusion.texture[(coords.x as u32, coords.y as u32)][0] as f32)
-                / 255.,
-        )
+        Some(occlusion.factor * (Self::get_pixel(tex_coords, &occlusion.texture)[0] as f32 / 255.))
     }
 
     /// Get the emissive color Rgb of the material given a texture coordinate.
@@ -155,16 +132,29 @@ impl Material {
     pub fn get_emissive(&self, tex_coords: Vector2<f32>) -> Vector3<f32> {
         let mut res = self.emissive.factor;
         if let Some(texture) = &self.emissive.texture {
-            let coords = tex_coords.mul_element_wise(Vector2::new(
-                texture.width() as f32,
-                texture.height() as f32,
-            ));
-            let pixel = texture[(coords.x as u32, coords.y as u32)];
+            let pixel = Self::get_pixel(tex_coords, texture);
             for i in 0..3 {
                 res[i] *= (pixel[i] as f32) / 255.;
             }
         }
         res
+    }
+
+    fn get_pixel<P, Container>(tex_coords: Vector2<f32>, texture: &ImageBuffer<P, Container>) -> P
+    where
+        P: Pixel + 'static,
+        P::Subpixel: 'static,
+        Container: Deref<Target = [P::Subpixel]>,
+    {
+        let coords = tex_coords.mul_element_wise(Vector2::new(
+            texture.width() as f32,
+            texture.height() as f32,
+        ));
+
+        texture[(
+            (coords.x as i64).rem_euclid(texture.width() as i64) as u32,
+            (coords.y as i64).rem_euclid(texture.height() as i64) as u32,
+        )]
     }
 
     pub(crate) fn load(gltf_mat: gltf::Material, data: &mut GltfData) -> Arc<Self> {

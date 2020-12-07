@@ -1,4 +1,3 @@
-use super::Mapper;
 use crate::utils::GltfData;
 use cgmath::*;
 use image::{GrayImage, RgbaImage};
@@ -34,9 +33,6 @@ pub struct PbrMaterial {
     /// texture is given, then the factor define the roughness for the whole
     /// object.
     pub roughness_factor: f32,
-
-    /// Mapper to apply a scale and offset on textures.
-    pub mapper: Mapper,
 }
 
 impl PbrMaterial {
@@ -68,7 +64,6 @@ impl Default for PbrMaterial {
             metallic_texture: None,
             roughness_factor: 0.,
             roughness_texture: None,
-            mapper: Default::default(),
         }
     }
 }

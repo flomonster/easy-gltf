@@ -1,4 +1,3 @@
-use super::Mapper;
 use crate::utils::GltfData;
 use image::RgbImage;
 use std::sync::Arc;
@@ -21,9 +20,6 @@ pub struct NormalMap {
     /// The `normal_factor` is the normal strength to be applied to the
     /// texture value.
     pub factor: f32,
-
-    /// Mapper to apply a scale and offset on textures.
-    pub mapper: Mapper,
 }
 
 impl NormalMap {
@@ -32,7 +28,6 @@ impl NormalMap {
             Some(texture) => Some(Self {
                 texture: data.load_rgb_image(&texture.texture()),
                 factor: texture.scale(),
-                mapper: Default::default(), // TODO Implem it
             }),
             None => None,
         }

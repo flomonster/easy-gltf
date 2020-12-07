@@ -1,4 +1,3 @@
-use super::Mapper;
 use crate::utils::GltfData;
 use cgmath::*;
 use image::RgbImage;
@@ -14,9 +13,6 @@ pub struct Emissive {
     /// The `emissive_factor` contains scaling factors for the red, green and
     /// blue components of this texture.
     pub factor: Vector3<f32>,
-
-    /// Mapper to apply a scale and offset on textures.
-    pub mapper: Mapper,
 }
 
 impl Emissive {
@@ -27,7 +23,6 @@ impl Emissive {
                 None => None,
             },
             factor: gltf_mat.emissive_factor().into(),
-            mapper: Default::default(), // TODO Implem it
         }
     }
 }
@@ -37,7 +32,6 @@ impl Default for Emissive {
         Self {
             texture: None,
             factor: Vector3::zero(),
-            mapper: Default::default(),
         }
     }
 }
