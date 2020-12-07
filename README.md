@@ -26,7 +26,7 @@ To install it, just add the dependency in your `Cargo.toml`.
 
 ```toml
 [dependencies]
-easy-gltf="0.1.2"
+easy-gltf="0.1.3"
 ```
 
 ### Usage
