@@ -7,6 +7,11 @@ pub struct Camera {
     #[cfg(feature="names")]
     /// Camera name. Requires the `names` feature.
     pub name: Option<String>,
+
+    #[cfg(feature="extras")]
+    /// Scene extra data. Requires the `extras` feature.
+    pub extras: gltf::json::extras::Extras,
+
     /// Transform matrix (also called world to camera matrix)
     pub transform: Matrix4<f32>,
 
@@ -82,6 +87,10 @@ impl Camera {
         {
             cam.name = gltf_cam.name().map(String::from);
         }
+        #[cfg(feature="extras")]
+        {
+            cam.extras = gltf_cam.extras().clone();
+        }
 
         cam.transform = transform.clone();
         match gltf_cam.projection() {
@@ -104,6 +113,8 @@ impl Default for Camera {
         Camera {
             #[cfg(feature="names")]
             name: None,
+            #[cfg(feature="extras")]
+            extras: None,
             transform: Zero::zero(),
             fov: Rad(0.399),
             zfar: f32::INFINITY,

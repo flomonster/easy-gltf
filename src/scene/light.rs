@@ -12,6 +12,9 @@ pub enum Light {
         #[cfg(feature="names")]
         /// Light name. Requires the `names` feature.
         name: Option<String>,
+        #[cfg(feature="extras")]
+        /// Light extra data. Requires the `extras` feature
+        extras: gltf::json::extras::Extras,
         /// Direction of the directional light
         direction: Vector3<f32>,
         /// Color of the directional light
@@ -29,6 +32,9 @@ pub enum Light {
         #[cfg(feature="names")]
         /// Light name. Requires the `names` feature.
         name: Option<String>,
+        #[cfg(feature="extras")]
+        /// Light extra data. Requires the `extras` feature
+        extras: gltf::json::extras::Extras,
         /// Position of the point light
         position: Vector3<f32>,
         /// Color of the point light
@@ -51,6 +57,9 @@ pub enum Light {
         #[cfg(feature="names")]
         /// Light name. Requires the `names` feature.
         name: Option<String>,
+        #[cfg(feature="extras")]
+        /// Light extra data. Requires the `extras` feature
+        extras: gltf::json::extras::Extras,
         /// Position of the spot light
         position: Vector3<f32>,
         /// Direction of the spot light
@@ -72,6 +81,8 @@ impl Light {
             Kind::Directional => Light::Directional {
                 #[cfg(feature="names")]
                 name: gltf_light.name().map(String::from),
+                #[cfg(feature="extras")]
+                extras: gltf_light.extras().clone(),
                 direction: -1.
                     * Vector3::new(transform[2][0], transform[2][1], transform[2][2]).normalize(),
                 intensity: gltf_light.intensity(),
@@ -80,6 +91,8 @@ impl Light {
             Kind::Point => Light::Point {
                 #[cfg(feature="names")]
                 name: gltf_light.name().map(String::from),
+                #[cfg(feature="extras")]
+                extras: gltf_light.extras().clone(),
                 position: Vector3::new(transform[3][0], transform[3][1], transform[3][2]),
                 intensity: gltf_light.intensity(),
                 color: Vector3::from(gltf_light.color()),
@@ -90,6 +103,8 @@ impl Light {
             } => Light::Spot {
                 #[cfg(feature="names")]
                 name: gltf_light.name().map(String::from),
+                #[cfg(feature="extras")]
+                extras: gltf_light.extras().clone(),
                 position: Vector3::new(transform[3][0], transform[3][1], transform[3][2]),
                 direction: -1.
                     * Vector3::new(transform[2][0], transform[2][1], transform[2][2]).normalize(),
