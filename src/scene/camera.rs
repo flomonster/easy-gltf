@@ -4,6 +4,9 @@ use gltf::camera::Projection as GltfProjection;
 /// Contains camera properties.
 #[derive(Clone, Debug)]
 pub struct Camera {
+    #[cfg(feature="names")]
+    /// Camera name. Requires the `names` feature.
+    pub name: Option<String>,
     /// Transform matrix (also called world to camera matrix)
     pub transform: Matrix4<f32>,
 
@@ -104,6 +107,12 @@ impl Camera {
             transform: *transform,
             ..Default::default()
         };
+
+        #[cfg(feature="names")]
+        {
+            cam.name = gltf_cam.name().map(String::from);
+        }
+
         match gltf_cam.projection() {
             GltfProjection::Orthographic(ortho) => {
                 cam.projection = Projection::Orthographic {
@@ -128,6 +137,8 @@ impl Camera {
 impl Default for Camera {
     fn default() -> Self {
         Camera {
+            #[cfg(feature="names")]
+            name: None,
             transform: Zero::zero(),
             projection: Projection::default(),
             zfar: f32::INFINITY,

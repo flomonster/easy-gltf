@@ -11,6 +11,10 @@ license = "MIT"
 keywords = ["glTF", "3D", "asset", "model", "scene"]
 exclude = [".github/"]
 
+[features]
+default = []
+names = ["gltf/names"]
+
 [dependencies]
 cgmath = "0.18.0"
 gltf = { version = "1.0.0", features = ["KHR_lights_punctual"] }

@@ -15,8 +15,12 @@ pub use occlusion::Occlusion;
 pub use pbr::PbrMaterial;
 
 /// Contains material properties of models.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
 pub struct Material {
+    #[cfg(feature="names")]
+    /// Material name. Requires the `names` feature.
+    pub name: Option<String>,
+
     /// Parameter values that define the metallic-roughness material model from
     /// Physically-Based Rendering (PBR) methodology.
     pub pbr: PbrMaterial,
@@ -163,6 +167,9 @@ impl Material {
         }
 
         let material = Arc::new(Material {
+            #[cfg(feature="names")]
+            name: gltf_mat.name().map(String::from),
+
             pbr: PbrMaterial::load(gltf_mat.pbr_metallic_roughness(), data),
             normal: NormalMap::load(&gltf_mat, data),
             occlusion: Occlusion::load(&gltf_mat, data),
@@ -172,5 +179,18 @@ impl Material {
         // Add to the collection
         data.materials.insert(gltf_mat.index(), material.clone());
         material
+    }
+}
+
+impl Default for Material {
+    fn default() -> Self {
+        Material {
+            #[cfg(feature="names")]
+            name: None,
+            pbr: Default::default(),
+            normal: None,
+            occlusion: None,
+            emissive: Default::default(),
+        }
     }
 }
