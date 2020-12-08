@@ -21,6 +21,10 @@ pub struct Material {
     /// Material name. Requires the `names` feature.
     pub name: Option<String>,
 
+    #[cfg(feature="extras")]
+    /// Material extra data. Requires the `extras` feature.
+    pub extras: gltf::json::extras::Extras,
+
     /// Parameter values that define the metallic-roughness material model from
     /// Physically-Based Rendering (PBR) methodology.
     pub pbr: PbrMaterial,
@@ -169,6 +173,8 @@ impl Material {
         let material = Arc::new(Material {
             #[cfg(feature="names")]
             name: gltf_mat.name().map(String::from),
+            #[cfg(feature="extras")]
+            extras: gltf_mat.extras().clone(),
 
             pbr: PbrMaterial::load(gltf_mat.pbr_metallic_roughness(), data),
             normal: NormalMap::load(&gltf_mat, data),
@@ -187,6 +193,8 @@ impl Default for Material {
         Material {
             #[cfg(feature="names")]
             name: None,
+            #[cfg(feature="extras")]
+            extras: None,
             pbr: Default::default(),
             normal: None,
             occlusion: None,

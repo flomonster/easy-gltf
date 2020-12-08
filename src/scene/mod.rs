@@ -20,6 +20,9 @@ pub struct Scene {
     #[cfg(feature="names")]
     /// Scene name. Requires the `names` feature.
     pub name: Option<String>,
+    #[cfg(feature="extras")]
+    /// Scene extra data. Requires the `extras` feature.
+    pub extras: gltf::json::extras::Extras,
     /// List of models in the scene
     pub models: Vec<Model>,
     /// List of cameras in the scene
@@ -35,6 +38,10 @@ impl Scene {
         #[cfg(feature="names")]
         {
             scene.name = gltf_scene.name().map(String::from);
+        }
+        #[cfg(feature="extras")]
+        {
+            scene.extras = gltf_scene.extras().clone();
         }
 
         for node in gltf_scene.nodes() {

@@ -65,6 +65,10 @@ pub use vertex::*;
 pub struct Model {
     #[cfg(feature="names")]
     pub(crate) mesh_name: Option<String>,
+    #[cfg(feature="extras")]
+    pub(crate) mesh_extras: gltf::json::extras::Extras,
+    #[cfg(feature="extras")]
+    pub(crate) primitive_extras: gltf::json::extras::Extras,
 
     pub(crate) primitive_index: usize,
     pub(crate) vertices: Vec<Vertex>,
@@ -90,6 +94,18 @@ impl Model {
     /// Index of the Primitive of the Mesh that this `Model` corresponds to.
     pub fn primitive_index(&self) -> usize {
         self.primitive_index
+    }
+
+    #[cfg(feature="extras")]
+    /// Mesh extra data. Requires the `extras` feature.
+    pub fn mesh_extras(&self) -> &gltf::json::extras::Extras {
+        &self.mesh_extras
+    }
+
+    #[cfg(feature="extras")]
+    /// Primitive extra data. Requires the `extras` feature.
+    pub fn primitive_extras(&self) -> &gltf::json::extras::Extras {
+        &self.primitive_extras
     }
 
     /// Material to apply to the whole model.
@@ -316,6 +332,10 @@ impl Model {
         Model {
             #[cfg(feature="names")]
             mesh_name: mesh.name().map(String::from),
+            #[cfg(feature="extras")]
+            mesh_extras: mesh.extras().clone(),
+            #[cfg(feature="extras")]
+            primitive_extras: primitive.extras().clone(),
             primitive_index,
             vertices,
             indices,

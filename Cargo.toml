@@ -14,6 +14,7 @@ exclude = [".github/"]
 [features]
 default = []
 names = ["gltf/names"]
+extras = ["gltf/extras"]
 
 [dependencies]
 cgmath = "0.18.0"
