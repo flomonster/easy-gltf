@@ -7,7 +7,7 @@ pub mod model;
 
 use crate::utils::transform_to_matrix;
 use crate::GltfData;
-pub use camera::Camera;
+pub use camera::{Camera, Projection};
 pub use light::Light;
 pub use model::{Material, Model};
 

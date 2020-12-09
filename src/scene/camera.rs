@@ -1,5 +1,5 @@
 use cgmath::*;
-use gltf::camera::Projection;
+use gltf::camera::Projection as GltfProjection;
 
 /// Contains camera properties.
 #[derive(Clone, Debug)]
@@ -7,14 +7,41 @@ pub struct Camera {
     /// Transform matrix (also called world to camera matrix)
     pub transform: Matrix4<f32>,
 
-    /// Angle in degree of field of view
-    pub fov: Rad<f32>,
+    /// Projection type and specific parameters
+    pub projection: Projection,
 
     /// The distance to the far clipping plane.
+    ///
+    /// For perspective projection, this may be infinite.
     pub zfar: f32,
 
     /// The distance to the near clipping plane.
     pub znear: f32,
+}
+
+/// Camera projections
+#[derive(Debug, Clone)]
+pub enum Projection {
+    /// Perspective projection
+    Perspective {
+        /// Y-axis FOV, in radians
+        yfov: Rad<f32>,
+        /// Aspect ratio, if specified
+        aspect_ratio: Option<f32>,
+    },
+    /// Orthographic projection
+    Orthographic {
+        /// Projection scale
+        scale: Vector2<f32>,
+    },
+}
+impl Default for Projection {
+    fn default() -> Self {
+        Self::Perspective {
+            yfov: Rad(0.399),
+            aspect_ratio: None,
+        }
+    }
 }
 
 impl Camera {
@@ -78,14 +105,20 @@ impl Camera {
             ..Default::default()
         };
         match gltf_cam.projection() {
-            Projection::Orthographic(ortho) => {
+            GltfProjection::Orthographic(ortho) => {
+                cam.projection = Projection::Orthographic {
+                    scale: Vector2::new(ortho.xmag(), ortho.ymag()),
+                };
                 cam.zfar = ortho.zfar();
                 cam.znear = ortho.znear();
             }
-            Projection::Perspective(pers) => {
+            GltfProjection::Perspective(pers) => {
+                cam.projection = Projection::Perspective {
+                    yfov: Rad(pers.yfov()),
+                    aspect_ratio: pers.aspect_ratio(),
+                };
                 cam.zfar = pers.zfar().unwrap_or(f32::INFINITY);
                 cam.znear = pers.znear();
-                cam.fov = Rad(pers.yfov());
             }
         };
         cam
@@ -96,7 +129,7 @@ impl Default for Camera {
     fn default() -> Self {
         Camera {
             transform: Zero::zero(),
-            fov: Rad(0.399),
+            projection: Projection::default(),
             zfar: f32::INFINITY,
             znear: 0.,
         }
