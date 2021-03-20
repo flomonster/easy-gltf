@@ -12,7 +12,7 @@ keywords = ["glTF", "3D", "asset", "model", "scene"]
 exclude = [".github/"]
 
 [dependencies]
-cgmath="0.17.0"
+cgmath = "0.18.0"
 gltf = {version = "0.15.2", features = ["KHR_lights_punctual"]}
-image="0.23.12"
+image = "0.23.14"
 base64 = "0.13.0"
