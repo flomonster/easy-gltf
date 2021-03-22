@@ -59,7 +59,7 @@ pub use scene::*;
 /// #   Ok(())
 /// # }
 /// ```
-pub fn load<P>(path: P) -> Result<Vec<Scene>, Box<dyn Error>>
+pub fn load<P>(path: P) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>>
 where
     P: AsRef<Path>,
 {
