@@ -149,6 +149,7 @@ mod tests {
                     direction,
                     color: _,
                     intensity,
+                    ..
                 } => {
                     assert!((direction - Vector3::new(0.6068, -0.7568, -0.2427)).magnitude() < 0.1);
                     assert_delta!(intensity, 542., 0.01);
@@ -157,6 +158,7 @@ mod tests {
                     position,
                     color: _,
                     intensity,
+                    ..
                 } => {
                     assert!((position - Vector3::new(4.0762, 5.9039, -1.0055)).magnitude() < 0.1);
                     assert_delta!(intensity, 1000., 0.01);
@@ -168,6 +170,7 @@ mod tests {
                     intensity,
                     inner_cone_angle: _,
                     outer_cone_angle,
+                    ..
                 } => {
                     assert!((position - Vector3::new(4.337, 15.541, -8.106)).magnitude() < 0.1);
                     assert!(

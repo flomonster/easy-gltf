@@ -9,6 +9,12 @@ pub enum Light {
     /// an infinite distance, the light is not attenuated. Its intensity is
     /// defined in lumens per metre squared, or lux (lm/m2).
     Directional {
+        #[cfg(feature="names")]
+        /// Light name. Requires the `names` feature.
+        name: Option<String>,
+        #[cfg(feature="extras")]
+        /// Light extra data. Requires the `extras` feature
+        extras: gltf::json::extras::Extras,
         /// Direction of the directional light
         direction: Vector3<f32>,
         /// Color of the directional light
@@ -23,6 +29,12 @@ pub enum Light {
     /// the inverse square of the distance). Point light intensity is defined in
     /// candela, which is lumens per square radian (lm/sr).
     Point {
+        #[cfg(feature="names")]
+        /// Light name. Requires the `names` feature.
+        name: Option<String>,
+        #[cfg(feature="extras")]
+        /// Light extra data. Requires the `extras` feature
+        extras: gltf::json::extras::Extras,
         /// Position of the point light
         position: Vector3<f32>,
         /// Color of the point light
@@ -42,6 +54,12 @@ pub enum Light {
     /// support two angles for spotlights should use outer_cone_angle as the
     /// spotlight angle (leaving `inner_cone_angle` to implicitly be `0`).
     Spot {
+        #[cfg(feature="names")]
+        /// Light name. Requires the `names` feature.
+        name: Option<String>,
+        #[cfg(feature="extras")]
+        /// Light extra data. Requires the `extras` feature
+        extras: gltf::json::extras::Extras,
         /// Position of the spot light
         position: Vector3<f32>,
         /// Direction of the spot light
@@ -61,12 +79,20 @@ impl Light {
     pub(crate) fn load(gltf_light: GltfLight, transform: &Matrix4<f32>) -> Self {
         match gltf_light.kind() {
             Kind::Directional => Light::Directional {
+                #[cfg(feature="names")]
+                name: gltf_light.name().map(String::from),
+                #[cfg(feature="extras")]
+                extras: gltf_light.extras().clone(),
                 direction: -1.
                     * Vector3::new(transform[2][0], transform[2][1], transform[2][2]).normalize(),
                 intensity: gltf_light.intensity(),
                 color: Vector3::from(gltf_light.color()),
             },
             Kind::Point => Light::Point {
+                #[cfg(feature="names")]
+                name: gltf_light.name().map(String::from),
+                #[cfg(feature="extras")]
+                extras: gltf_light.extras().clone(),
                 position: Vector3::new(transform[3][0], transform[3][1], transform[3][2]),
                 intensity: gltf_light.intensity(),
                 color: Vector3::from(gltf_light.color()),
@@ -75,6 +101,10 @@ impl Light {
                 inner_cone_angle,
                 outer_cone_angle,
             } => Light::Spot {
+                #[cfg(feature="names")]
+                name: gltf_light.name().map(String::from),
+                #[cfg(feature="extras")]
+                extras: gltf_light.extras().clone(),
                 position: Vector3::new(transform[3][0], transform[3][1], transform[3][2]),
                 direction: -1.
                     * Vector3::new(transform[2][0], transform[2][1], transform[2][2]).normalize(),

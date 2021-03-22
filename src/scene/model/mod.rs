@@ -63,6 +63,14 @@ pub use vertex::*;
 /// ```
 #[derive(Clone, Debug, Default)]
 pub struct Model {
+    #[cfg(feature="names")]
+    pub(crate) mesh_name: Option<String>,
+    #[cfg(feature="extras")]
+    pub(crate) mesh_extras: gltf::json::extras::Extras,
+    #[cfg(feature="extras")]
+    pub(crate) primitive_extras: gltf::json::extras::Extras,
+
+    pub(crate) primitive_index: usize,
     pub(crate) vertices: Vec<Vertex>,
     pub(crate) indices: Option<Vec<usize>>,
     pub(crate) mode: Mode,
@@ -73,6 +81,33 @@ pub struct Model {
 }
 
 impl Model {
+    #[cfg(feature="names")]
+    /// Mesh name. Requires the `names` feature.
+    ///
+    /// A `Model` in easy-gltf represents a primitive in gltf, so if a mesh has multiple primitives, you will
+    /// get multiple `Model`s with the same name. You can use `primitive_index` to get which primitive the `Model`
+    /// corresponds to.
+    pub fn mesh_name(&self) -> Option<&str> {
+        self.mesh_name.as_deref()
+    }
+
+    /// Index of the Primitive of the Mesh that this `Model` corresponds to.
+    pub fn primitive_index(&self) -> usize {
+        self.primitive_index
+    }
+
+    #[cfg(feature="extras")]
+    /// Mesh extra data. Requires the `extras` feature.
+    pub fn mesh_extras(&self) -> &gltf::json::extras::Extras {
+        &self.mesh_extras
+    }
+
+    #[cfg(feature="extras")]
+    /// Primitive extra data. Requires the `extras` feature.
+    pub fn primitive_extras(&self) -> &gltf::json::extras::Extras {
+        &self.primitive_extras
+    }
+
     /// Material to apply to the whole model.
     pub fn material(&self) -> Arc<Material> {
         self.material.clone()
@@ -237,10 +272,17 @@ impl Model {
     }
 
     pub(crate) fn load(
+        mesh: &gltf::Mesh,
+        primitive_index: usize,
         primitive: gltf::Primitive,
         transform: &Matrix4<f32>,
         data: &mut GltfData,
     ) -> Self {
+        #[cfg(not(feature="names"))]
+        {
+            let _ = mesh;
+        }
+
         let buffers = &data.buffers;
         let reader = primitive.reader(|buffer| Some(&buffers[buffer.index()]));
         let indices = if let Some(indices) = reader.read_indices() {
@@ -290,6 +332,13 @@ impl Model {
         };
 
         Model {
+            #[cfg(feature="names")]
+            mesh_name: mesh.name().map(String::from),
+            #[cfg(feature="extras")]
+            mesh_extras: mesh.extras().clone(),
+            #[cfg(feature="extras")]
+            primitive_extras: primitive.extras().clone(),
+            primitive_index,
             vertices,
             indices,
             material: Material::load(primitive.material(), data),
