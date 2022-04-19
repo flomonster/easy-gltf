@@ -1,6 +1,6 @@
 [package]
 name = "easy-gltf"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Florian Amsallem <florian.amsallem@epita.fr>"]
 description = "glTF 2.0 loader with an easy to use output"
 documentation = "https://docs.rs/easy-gltf"
@@ -13,6 +13,6 @@ exclude = [".github/"]
 
 [dependencies]
 cgmath = "0.18.0"
-gltf = {version = "0.15.2", features = ["KHR_lights_punctual"]}
-image = "0.23.14"
+gltf = {version = "1.0.0", features = ["KHR_lights_punctual"]}
+image = "0.24.1"
 base64 = "0.13.0"
