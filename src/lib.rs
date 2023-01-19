@@ -15,8 +15,7 @@
 //! # Example
 //!
 //! ```
-//! # fn run() -> Result<(), Box<dyn std::error::Error>> {
-//! let scenes = easy_gltf::load("tests/cube.glb")?;
+//! let scenes = easy_gltf::load("tests/cube.glb").expect("Failed to load glTF");
 //! for scene in scenes {
 //!     println!(
 //!         "Cameras: #{}  Lights: #{}  Models: #{}",
@@ -25,12 +24,6 @@
 //!         scene.models.len()
 //!     )
 //! }
-//! #     Ok(())
-//! # }
-//! #
-//! #  fn main() {
-//! #      let _ = run().expect("runtime error");
-//! #  }
 //! ```
 
 mod scene;
@@ -49,15 +42,12 @@ pub use scene::*;
 /// # Example
 ///
 /// ```
-/// # fn run() -> Result<(), Box<dyn std::error::Error>> {
-///     let scenes = easy_gltf::load("tests/cube.glb")?;
-///     println!("Scenes: #{}", scenes.len()); // Output "Scenes: #1"
-///     let scene = &scenes[0]; // Retrieve the first and only scene
-///     println!("Cameras: #{}", scene.cameras.len());
-///     println!("Lights: #{}", scene.lights.len());
-///     println!("Models: #{}", scene.models.len());
-/// #   Ok(())
-/// # }
+/// let scenes = easy_gltf::load("tests/cube.glb").expect("Failed to load glTF");
+/// println!("Scenes: #{}", scenes.len()); // Output "Scenes: #1"
+/// let scene = &scenes[0]; // Retrieve the first and only scene
+/// println!("Cameras: #{}", scene.cameras.len());
+/// println!("Lights: #{}", scene.lights.len());
+/// println!("Models: #{}", scene.models.len());
 /// ```
 pub fn load<P>(path: P) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>>
 where
