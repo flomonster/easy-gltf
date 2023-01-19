@@ -49,8 +49,12 @@ impl PbrMaterial {
         material.metallic_factor = pbr.metallic_factor();
 
         if let Some(texture) = pbr.metallic_roughness_texture() {
-            material.metallic_texture = Some(data.load_gray_image(&texture.texture(), 2));
-            material.roughness_texture = Some(data.load_gray_image(&texture.texture(), 1));
+            if material.metallic_factor > 0. {
+                material.metallic_texture = Some(data.load_gray_image(&texture.texture(), 2));
+            }
+            if material.roughness_factor > 0. {
+                material.roughness_texture = Some(data.load_gray_image(&texture.texture(), 1));
+            }
         }
 
         material
