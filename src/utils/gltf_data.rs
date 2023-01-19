@@ -41,7 +41,7 @@ impl GltfData {
             return image.clone();
         }
 
-        let img = Arc::new(self.load_texture(&texture).to_rgb8());
+        let img = Arc::new(self.load_texture(texture).to_rgb8());
         self.rgb_images.insert(texture.index(), img.clone());
         img
     }
@@ -50,7 +50,7 @@ impl GltfData {
         if let Some(image) = self.rgba_images.get(&texture.index()) {
             return image.clone();
         }
-        let img = Arc::new(self.load_texture(&texture).to_rgba8());
+        let img = Arc::new(self.load_texture(texture).to_rgba8());
         self.rgba_images.insert(texture.index(), img.clone());
         img
     }
@@ -63,7 +63,7 @@ impl GltfData {
         if let Some(image) = self.gray_images.get(&(texture.index(), channel)) {
             return image.clone();
         }
-        let img = self.load_texture(&texture).to_rgba8();
+        let img = self.load_texture(texture).to_rgba8();
         let mut extract_img = GrayImage::new(img.width(), img.height());
         for (x, y, px) in img.enumerate_pixels() {
             extract_img[(x, y)][0] = px[channel];
@@ -81,7 +81,7 @@ impl GltfData {
             Source::View { view, mime_type } => {
                 let parent_buffer_data = &buffers[view.buffer().index()].0;
                 let data = &parent_buffer_data[view.offset()..view.offset() + view.length()];
-                let mime_type = mime_type.replace("/", ".");
+                let mime_type = mime_type.replace('/', ".");
                 image::load_from_memory_with_format(
                     data,
                     ImageFormat::from_path(mime_type).unwrap(),
@@ -91,21 +91,19 @@ impl GltfData {
             Source::Uri { uri, mime_type } => {
                 if uri.starts_with("data:") {
                     let encoded = uri.split(',').nth(1).unwrap();
-                    let data = URL_SAFE_NO_PAD.decode(&encoded).unwrap();
+                    let data = URL_SAFE_NO_PAD.decode(encoded).unwrap();
                     let mime_type = if let Some(ty) = mime_type {
                         ty
                     } else {
-                        uri.split(',')
-                            .nth(0)
+                        uri.split(',').next()
                             .unwrap()
                             .split(':')
                             .nth(1)
                             .unwrap()
-                            .split(';')
-                            .nth(0)
+                            .split(';').next()
                             .unwrap()
                     };
-                    let mime_type = mime_type.replace("/", ".");
+                    let mime_type = mime_type.replace('/', ".");
                     image::load_from_memory_with_format(
                         &data,
                         ImageFormat::from_path(mime_type).unwrap(),

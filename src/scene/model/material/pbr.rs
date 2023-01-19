@@ -37,8 +37,10 @@ pub struct PbrMaterial {
 
 impl PbrMaterial {
     pub(crate) fn load(pbr: gltf::material::PbrMetallicRoughness, data: &mut GltfData) -> Self {
-        let mut material = Self::default();
-        material.base_color_factor = pbr.base_color_factor().into();
+        let mut material = Self {
+            base_color_factor: pbr.base_color_factor().into(),
+            ..Default::default()
+        };
         if let Some(texture) = pbr.base_color_texture() {
             material.base_color_texture = Some(data.load_base_color_image(&texture.texture()));
         }

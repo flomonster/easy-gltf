@@ -15,7 +15,7 @@ pub use occlusion::Occlusion;
 pub use pbr::PbrMaterial;
 
 /// Contains material properties of models.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Material {
     /// Parameter values that define the metallic-roughness material model from
     /// Physically-Based Rendering (PBR) methodology.
@@ -172,16 +172,5 @@ impl Material {
         // Add to the collection
         data.materials.insert(gltf_mat.index(), material.clone());
         material
-    }
-}
-
-impl Default for Material {
-    fn default() -> Self {
-        Material {
-            pbr: Default::default(),
-            normal: None,
-            occlusion: None,
-            emissive: Default::default(),
-        }
     }
 }

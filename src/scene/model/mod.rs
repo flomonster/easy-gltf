@@ -243,11 +243,9 @@ impl Model {
     ) -> Self {
         let buffers = &data.buffers;
         let reader = primitive.reader(|buffer| Some(&buffers[buffer.index()]));
-        let indices = if let Some(indices) = reader.read_indices() {
-            Some(indices.into_u32().map(|i| i as usize).collect())
-        } else {
-            None
-        };
+        let indices = reader
+            .read_indices()
+            .map(|indices| indices.into_u32().map(|i| i as usize).collect());
 
         // Init vertices with the position
         let mut vertices: Vec<_> = reader

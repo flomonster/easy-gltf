@@ -18,10 +18,9 @@ pub struct Emissive {
 impl Emissive {
     pub(crate) fn load(gltf_mat: &gltf::Material, data: &mut GltfData) -> Self {
         Self {
-            texture: match gltf_mat.emissive_texture() {
-                Some(texture) => Some(data.load_rgb_image(&texture.texture())),
-                None => None,
-            },
+            texture: gltf_mat
+                .emissive_texture()
+                .map(|texture| data.load_rgb_image(&texture.texture())),
             factor: gltf_mat.emissive_factor().into(),
         }
     }

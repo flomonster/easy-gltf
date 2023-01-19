@@ -73,8 +73,10 @@ impl Camera {
     }
 
     pub(crate) fn load(gltf_cam: gltf::Camera, transform: &Matrix4<f32>) -> Self {
-        let mut cam = Self::default();
-        cam.transform = transform.clone();
+        let mut cam = Self {
+            transform: *transform,
+            ..Default::default()
+        };
         match gltf_cam.projection() {
             Projection::Orthographic(ortho) => {
                 cam.zfar = ortho.zfar();

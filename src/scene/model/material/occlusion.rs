@@ -16,12 +16,9 @@ pub struct Occlusion {
 
 impl Occlusion {
     pub(crate) fn load(gltf_mat: &gltf::Material, data: &mut GltfData) -> Option<Self> {
-        match gltf_mat.occlusion_texture() {
-            Some(texture) => Some(Self {
-                texture: data.load_gray_image(&texture.texture(), 0),
-                factor: texture.strength(),
-            }),
-            None => None,
-        }
+        gltf_mat.occlusion_texture().map(|texture| Self {
+            texture: data.load_gray_image(&texture.texture(), 0),
+            factor: texture.strength(),
+        })
     }
 }

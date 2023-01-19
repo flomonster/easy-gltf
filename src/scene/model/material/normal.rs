@@ -24,12 +24,9 @@ pub struct NormalMap {
 
 impl NormalMap {
     pub(crate) fn load(gltf_mat: &gltf::Material, data: &mut GltfData) -> Option<Self> {
-        match gltf_mat.normal_texture() {
-            Some(texture) => Some(Self {
-                texture: data.load_rgb_image(&texture.texture()),
-                factor: texture.scale(),
-            }),
-            None => None,
-        }
+        gltf_mat.normal_texture().map(|texture| Self {
+            texture: data.load_rgb_image(&texture.texture()),
+            factor: texture.scale(),
+        })
     }
 }
