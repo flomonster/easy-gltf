@@ -9,7 +9,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! easy-gltf="0.1.5"
+//! easy-gltf="1.0.0"
 //! ```
 //!
 //! # Example

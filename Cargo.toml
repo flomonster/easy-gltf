@@ -1,6 +1,6 @@
 [package]
 name = "easy-gltf"
-version = "0.1.5"
+version = "1.0.0"
 authors = ["Florian Amsallem <florian.amsallem@epita.fr>"]
 description = "glTF 2.0 loader with an easy to use output"
 documentation = "https://docs.rs/easy-gltf"
