@@ -1,4 +1,6 @@
 use crate::Material;
+use base64::engine::general_purpose::URL_SAFE_NO_PAD;
+use base64::Engine;
 use gltf::image::Source;
 use image::*;
 use std::collections::HashMap;
@@ -89,7 +91,7 @@ impl GltfData {
             Source::Uri { uri, mime_type } => {
                 if uri.starts_with("data:") {
                     let encoded = uri.split(',').nth(1).unwrap();
-                    let data = base64::decode(&encoded).unwrap();
+                    let data = URL_SAFE_NO_PAD.decode(&encoded).unwrap();
                     let mime_type = if let Some(ty) = mime_type {
                         ty
                     } else {
