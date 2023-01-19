@@ -95,12 +95,14 @@ impl GltfData {
                     let mime_type = if let Some(ty) = mime_type {
                         ty
                     } else {
-                        uri.split(',').next()
+                        uri.split(',')
+                            .next()
                             .unwrap()
                             .split(':')
                             .nth(1)
                             .unwrap()
-                            .split(';').next()
+                            .split(';')
+                            .next()
                             .unwrap()
                     };
                     let mime_type = mime_type.replace('/', ".");
