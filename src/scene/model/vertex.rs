@@ -7,7 +7,8 @@ pub type Triangle = [Vertex; 3];
 pub type Line = [Vertex; 2];
 
 /// Contains a position, normal and texture coordinates vectors.
-#[derive(Clone, Debug, PartialEq)]
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vertex {
     /// Position
     pub position: Vector3<f32>,
