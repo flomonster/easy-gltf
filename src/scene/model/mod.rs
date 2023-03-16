@@ -64,7 +64,7 @@ pub use vertex::*;
 #[derive(Clone, Debug, Default)]
 pub struct Model {
     pub(crate) vertices: Vec<Vertex>,
-    pub(crate) indices: Option<Vec<usize>>,
+    pub(crate) indices: Option<Vec<u32>>,
     pub(crate) mode: Mode,
     pub(crate) material: Arc<Material>,
     pub(crate) has_normals: bool,
@@ -91,7 +91,7 @@ impl Model {
     ///
     /// **Note**: If you're **not** rendering with **OpenGL** you probably want to use
     /// `triangles()`, `lines()` or `points()` instead.
-    pub fn indices(&self) -> Option<&Vec<usize>> {
+    pub fn indices(&self) -> Option<&Vec<u32>> {
         self.indices.as_ref()
     }
 
@@ -111,34 +111,34 @@ impl Model {
     /// or `TriangleStrip`.
     pub fn triangles(&self) -> Result<Vec<Triangle>, BadMode> {
         let mut triangles = vec![];
-        let indices = (0..self.vertices.len()).collect();
+        let indices = (0..self.vertices.len() as u32).collect();
         let indices = self.indices().unwrap_or(&indices);
 
         match self.mode {
             Mode::Triangles => {
                 for i in (0..indices.len()).step_by(3) {
                     triangles.push([
-                        self.vertices[indices[i]].clone(),
-                        self.vertices[indices[i + 1]].clone(),
-                        self.vertices[indices[i + 2]].clone(),
+                        self.vertices[indices[i] as usize].clone(),
+                        self.vertices[indices[i + 1] as usize].clone(),
+                        self.vertices[indices[i + 2] as usize].clone(),
                     ]);
                 }
             }
             Mode::TriangleStrip => {
                 for i in 0..(indices.len() - 2) {
                     triangles.push([
-                        self.vertices[indices[i] + i % 2].clone(),
-                        self.vertices[indices[i + 1 - i % 2]].clone(),
-                        self.vertices[indices[i + 2]].clone(),
+                        self.vertices[indices[i] as usize + i % 2].clone(),
+                        self.vertices[indices[i + 1 - i % 2] as usize].clone(),
+                        self.vertices[indices[i + 2] as usize].clone(),
                     ]);
                 }
             }
             Mode::TriangleFan => {
                 for i in 1..(indices.len() - 1) {
                     triangles.push([
-                        self.vertices[indices[0]].clone(),
-                        self.vertices[indices[i]].clone(),
-                        self.vertices[indices[i + 1]].clone(),
+                        self.vertices[indices[0] as usize].clone(),
+                        self.vertices[indices[i] as usize].clone(),
+                        self.vertices[indices[i + 1] as usize].clone(),
                     ]);
                 }
             }
@@ -153,22 +153,22 @@ impl Model {
     /// or `LineStrip`.
     pub fn lines(&self) -> Result<Vec<Line>, BadMode> {
         let mut lines = vec![];
-        let indices = (0..self.vertices.len()).collect();
+        let indices = (0..self.vertices.len() as u32).collect();
         let indices = self.indices().unwrap_or(&indices);
         match self.mode {
             Mode::Lines => {
                 for i in (0..indices.len()).step_by(2) {
                     lines.push([
-                        self.vertices[indices[i]].clone(),
-                        self.vertices[indices[i + 1]].clone(),
+                        self.vertices[indices[i] as usize].clone(),
+                        self.vertices[indices[i + 1] as usize].clone(),
                     ]);
                 }
             }
             Mode::LineStrip | Mode::LineLoop => {
                 for i in 0..(indices.len() - 1) {
                     lines.push([
-                        self.vertices[indices[i]].clone(),
-                        self.vertices[indices[i + 1]].clone(),
+                        self.vertices[indices[i] as usize].clone(),
+                        self.vertices[indices[i + 1] as usize].clone(),
                     ]);
                 }
             }
@@ -176,8 +176,8 @@ impl Model {
         }
         if self.mode == Mode::LineLoop {
             lines.push([
-                self.vertices[indices[0]].clone(),
-                self.vertices[indices[indices.len() - 1]].clone(),
+                self.vertices[indices[0] as usize].clone(),
+                self.vertices[indices[indices.len() - 1] as usize].clone(),
             ]);
         }
 
@@ -245,7 +245,7 @@ impl Model {
         let reader = primitive.reader(|buffer| Some(&buffers[buffer.index()]));
         let indices = reader
             .read_indices()
-            .map(|indices| indices.into_u32().map(|i| i as usize).collect());
+            .map(|indices| indices.into_u32().collect());
 
         // Init vertices with the position
         let mut vertices: Vec<_> = reader
