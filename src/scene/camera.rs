@@ -4,11 +4,11 @@ use gltf::camera::Projection as GltfProjection;
 /// Contains camera properties.
 #[derive(Clone, Debug)]
 pub struct Camera {
-    #[cfg(feature="names")]
+    #[cfg(feature = "names")]
     /// Camera name. Requires the `names` feature.
     pub name: Option<String>,
 
-    #[cfg(feature="extras")]
+    #[cfg(feature = "extras")]
     /// Scene extra data. Requires the `extras` feature.
     pub extras: gltf::json::extras::Extras,
 
@@ -113,11 +113,11 @@ impl Camera {
             ..Default::default()
         };
 
-        #[cfg(feature="names")]
+        #[cfg(feature = "names")]
         {
             cam.name = gltf_cam.name().map(String::from);
         }
-        #[cfg(feature="extras")]
+        #[cfg(feature = "extras")]
         {
             cam.extras = gltf_cam.extras().clone();
         }
@@ -146,9 +146,9 @@ impl Camera {
 impl Default for Camera {
     fn default() -> Self {
         Camera {
-            #[cfg(feature="names")]
+            #[cfg(feature = "names")]
             name: None,
-            #[cfg(feature="extras")]
+            #[cfg(feature = "extras")]
             extras: None,
             transform: Zero::zero(),
             projection: Projection::default(),

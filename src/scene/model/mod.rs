@@ -63,11 +63,11 @@ pub use vertex::*;
 /// ```
 #[derive(Clone, Debug, Default)]
 pub struct Model {
-    #[cfg(feature="names")]
+    #[cfg(feature = "names")]
     pub(crate) mesh_name: Option<String>,
-    #[cfg(feature="extras")]
+    #[cfg(feature = "extras")]
     pub(crate) mesh_extras: gltf::json::extras::Extras,
-    #[cfg(feature="extras")]
+    #[cfg(feature = "extras")]
     pub(crate) primitive_extras: gltf::json::extras::Extras,
 
     pub(crate) primitive_index: usize,
@@ -81,7 +81,7 @@ pub struct Model {
 }
 
 impl Model {
-    #[cfg(feature="names")]
+    #[cfg(feature = "names")]
     /// Mesh name. Requires the `names` feature.
     ///
     /// A `Model` in easy-gltf represents a primitive in gltf, so if a mesh has multiple primitives, you will
@@ -96,13 +96,13 @@ impl Model {
         self.primitive_index
     }
 
-    #[cfg(feature="extras")]
+    #[cfg(feature = "extras")]
     /// Mesh extra data. Requires the `extras` feature.
     pub fn mesh_extras(&self) -> &gltf::json::extras::Extras {
         &self.mesh_extras
     }
 
-    #[cfg(feature="extras")]
+    #[cfg(feature = "extras")]
     /// Primitive extra data. Requires the `extras` feature.
     pub fn primitive_extras(&self) -> &gltf::json::extras::Extras {
         &self.primitive_extras
@@ -153,27 +153,27 @@ impl Model {
             Mode::Triangles => {
                 for i in (0..indices.len()).step_by(3) {
                     triangles.push([
-                        self.vertices[indices[i] as usize].clone(),
-                        self.vertices[indices[i + 1] as usize].clone(),
-                        self.vertices[indices[i + 2] as usize].clone(),
+                        self.vertices[indices[i] as usize],
+                        self.vertices[indices[i + 1] as usize],
+                        self.vertices[indices[i + 2] as usize],
                     ]);
                 }
             }
             Mode::TriangleStrip => {
                 for i in 0..(indices.len() - 2) {
                     triangles.push([
-                        self.vertices[indices[i] as usize + i % 2].clone(),
-                        self.vertices[indices[i + 1 - i % 2] as usize].clone(),
-                        self.vertices[indices[i + 2] as usize].clone(),
+                        self.vertices[indices[i] as usize + i % 2],
+                        self.vertices[indices[i + 1 - i % 2] as usize],
+                        self.vertices[indices[i + 2] as usize],
                     ]);
                 }
             }
             Mode::TriangleFan => {
                 for i in 1..(indices.len() - 1) {
                     triangles.push([
-                        self.vertices[indices[0] as usize].clone(),
-                        self.vertices[indices[i] as usize].clone(),
-                        self.vertices[indices[i + 1] as usize].clone(),
+                        self.vertices[indices[0] as usize],
+                        self.vertices[indices[i] as usize],
+                        self.vertices[indices[i + 1] as usize],
                     ]);
                 }
             }
@@ -194,16 +194,16 @@ impl Model {
             Mode::Lines => {
                 for i in (0..indices.len()).step_by(2) {
                     lines.push([
-                        self.vertices[indices[i] as usize].clone(),
-                        self.vertices[indices[i + 1] as usize].clone(),
+                        self.vertices[indices[i] as usize],
+                        self.vertices[indices[i + 1] as usize],
                     ]);
                 }
             }
             Mode::LineStrip | Mode::LineLoop => {
                 for i in 0..(indices.len() - 1) {
                     lines.push([
-                        self.vertices[indices[i] as usize].clone(),
-                        self.vertices[indices[i + 1] as usize].clone(),
+                        self.vertices[indices[i] as usize],
+                        self.vertices[indices[i + 1] as usize],
                     ]);
                 }
             }
@@ -211,8 +211,8 @@ impl Model {
         }
         if self.mode == Mode::LineLoop {
             lines.push([
-                self.vertices[indices[0] as usize].clone(),
-                self.vertices[indices[indices.len() - 1] as usize].clone(),
+                self.vertices[indices[0] as usize],
+                self.vertices[indices[indices.len() - 1] as usize],
             ]);
         }
 
@@ -278,7 +278,7 @@ impl Model {
         transform: &Matrix4<f32>,
         data: &mut GltfData,
     ) -> Self {
-        #[cfg(not(feature="names"))]
+        #[cfg(not(feature = "names"))]
         {
             let _ = mesh;
         }
@@ -330,11 +330,11 @@ impl Model {
         };
 
         Model {
-            #[cfg(feature="names")]
+            #[cfg(feature = "names")]
             mesh_name: mesh.name().map(String::from),
-            #[cfg(feature="extras")]
+            #[cfg(feature = "extras")]
             mesh_extras: mesh.extras().clone(),
-            #[cfg(feature="extras")]
+            #[cfg(feature = "extras")]
             primitive_extras: primitive.extras().clone(),
             primitive_index,
             vertices,

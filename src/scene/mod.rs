@@ -17,10 +17,10 @@ use gltf::scene::Node;
 /// Contains cameras, models and lights of a scene.
 #[derive(Default, Clone, Debug)]
 pub struct Scene {
-    #[cfg(feature="names")]
+    #[cfg(feature = "names")]
     /// Scene name. Requires the `names` feature.
     pub name: Option<String>,
-    #[cfg(feature="extras")]
+    #[cfg(feature = "extras")]
     /// Scene extra data. Requires the `extras` feature.
     pub extras: gltf::json::extras::Extras,
     /// List of models in the scene
@@ -35,11 +35,11 @@ impl Scene {
     pub(crate) fn load(gltf_scene: gltf::Scene, data: &mut GltfData) -> Self {
         let mut scene = Self::default();
 
-        #[cfg(feature="names")]
+        #[cfg(feature = "names")]
         {
             scene.name = gltf_scene.name().map(String::from);
         }
-        #[cfg(feature="extras")]
+        #[cfg(feature = "extras")]
         {
             scene.extras = gltf_scene.extras().clone();
         }
@@ -72,7 +72,8 @@ impl Scene {
         // Load model
         if let Some(mesh) = node.mesh() {
             for (i, primitive) in mesh.primitives().enumerate() {
-                self.models.push(Model::load(&mesh, i, primitive, &transform, data));
+                self.models
+                    .push(Model::load(&mesh, i, primitive, &transform, data));
             }
         }
     }

@@ -15,13 +15,13 @@ pub use occlusion::Occlusion;
 pub use pbr::PbrMaterial;
 
 /// Contains material properties of models.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Material {
-    #[cfg(feature="names")]
+    #[cfg(feature = "names")]
     /// Material name. Requires the `names` feature.
     pub name: Option<String>,
 
-    #[cfg(feature="extras")]
+    #[cfg(feature = "extras")]
     /// Material extra data. Requires the `extras` feature.
     pub extras: gltf::json::extras::Extras,
 
@@ -171,9 +171,9 @@ impl Material {
         }
 
         let material = Arc::new(Material {
-            #[cfg(feature="names")]
+            #[cfg(feature = "names")]
             name: gltf_mat.name().map(String::from),
-            #[cfg(feature="extras")]
+            #[cfg(feature = "extras")]
             extras: gltf_mat.extras().clone(),
 
             pbr: PbrMaterial::load(gltf_mat.pbr_metallic_roughness(), data),
@@ -185,20 +185,5 @@ impl Material {
         // Add to the collection
         data.materials.insert(gltf_mat.index(), material.clone());
         material
-    }
-}
-
-impl Default for Material {
-    fn default() -> Self {
-        Material {
-            #[cfg(feature="names")]
-            name: None,
-            #[cfg(feature="extras")]
-            extras: None,
-            pbr: Default::default(),
-            normal: None,
-            occlusion: None,
-            emissive: Default::default(),
-        }
     }
 }

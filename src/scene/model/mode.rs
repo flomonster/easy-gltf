@@ -4,7 +4,7 @@ use std::fmt;
 ///
 /// To find more information for each mode and how to render them check
 /// [Khronos Primitive Documentation](https://www.khronos.org/opengl/wiki/Primitive).
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Default)]
 pub enum Mode {
     /// Corresponds to `GL_POINTS`.
     Points,
@@ -15,17 +15,12 @@ pub enum Mode {
     /// Corresponds to `GL_LINE_STRIP`.
     LineStrip,
     /// Corresponds to `GL_TRIANGLES`.
+    #[default]
     Triangles,
     /// Corresponds to `GL_TRIANGLE_STRIP`.
     TriangleStrip,
     /// Corresponds to `GL_TRIANGLE_FAN`.
     TriangleFan,
-}
-
-impl Default for Mode {
-    fn default() -> Self {
-        Mode::Triangles
-    }
 }
 
 impl From<gltf::mesh::Mode> for Mode {
