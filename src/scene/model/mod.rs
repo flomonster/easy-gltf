@@ -312,7 +312,8 @@ impl Model {
         // Fill tangents
         let has_tangents = if let Some(tangents) = reader.read_tangents() {
             for (i, tangent) in tangents.enumerate() {
-                vertices[i].tangent = Self::apply_transform_tangent(tangent, transform).normalize();
+                let tangent = Self::apply_transform_tangent(tangent, transform);
+                vertices[i].tangent = tangent.truncate().normalize().extend(tangent.w);
             }
             true
         } else {

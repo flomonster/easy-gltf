@@ -180,12 +180,15 @@ mod tests {
         let model = &scene.models[0];
         assert!(model.has_normals());
         assert!(model.has_tex_coords());
-        assert!(!model.has_tangents());
+        assert!(model.has_tangents());
         for t in model.triangles().unwrap().iter().flatten() {
             let pos = t.position;
             assert!(pos.x > -0.01 && pos.x < 1.01);
             assert!(pos.y > -0.01 && pos.y < 1.01);
             assert!(pos.z > -0.01 && pos.z < 1.01);
+
+            // Check that the tangent w component is 1 or -1
+            assert_eq!(t.tangent.w.abs(), 1.);
         }
     }
 
