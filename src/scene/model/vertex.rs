@@ -15,6 +15,7 @@ pub struct Vertex {
     /// Normalized normal
     pub normal: Vector3<f32>,
     /// Tangent normal
+    /// The w component is the handedness of the tangent basis (can be -1 or 1)
     pub tangent: Vector4<f32>,
     /// Texture coordinates
     pub tex_coords: Vector2<f32>,
