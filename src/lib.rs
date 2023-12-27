@@ -87,7 +87,7 @@ pub fn load_slice<S: AsRef<[u8]>>(slice: S) -> Result<Vec<Scene>, Box<dyn Error 
     let (doc, buffers, images) = gltf::import_slice(&slice)?;
 
     // Init data and collection useful for conversion
-    let mut data = GltfData::new(buffers, images, std::env::current_dir().unwrap());
+    let mut data = GltfData::new(buffers, images, std::env::current_dir().unwrap_or_default());
 
     // Convert gltf -> easy_gltf
     let mut res = vec![];
