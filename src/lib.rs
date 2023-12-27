@@ -67,6 +67,36 @@ where
     Ok(res)
 }
 
+/// Load scenes from slice to a glTF 2.0.
+///
+/// Note: You can use this function with either a `Gltf` (standard `glTF`) or `Glb` (binary glTF).
+///
+/// # Example
+///
+/// ```
+/// let contents = include_bytes!("../tests/cube.glb");
+/// let scenes = easy_gltf::load_slice(&contents).expect("Failed to load glTF");
+/// println!("Scenes: #{}", scenes.len()); // Output "Scenes: #1"
+/// let scene = &scenes[0]; // Retrieve the first and only scene
+/// println!("Cameras: #{}", scene.cameras.len());
+/// println!("Lights: #{}", scene.lights.len());
+/// println!("Models: #{}", scene.models.len());
+/// ```
+pub fn load_slice<S: AsRef<[u8]>>(slice: S) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>> {
+    // Run gltf
+    let (doc, buffers, images) = gltf::import_slice(&slice)?;
+
+    // Init data and collection useful for conversion
+    let mut data = GltfData::new(buffers, images, std::env::current_dir().unwrap());
+
+    // Convert gltf -> easy_gltf
+    let mut res = vec![];
+    for scene in doc.scenes() {
+        res.push(Scene::load(scene, &mut data));
+    }
+    Ok(res)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::model::Mode;
