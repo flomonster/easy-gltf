@@ -49,10 +49,7 @@ pub use scene::*;
 /// println!("Lights: #{}", scene.lights.len());
 /// println!("Models: #{}", scene.models.len());
 /// ```
-pub fn load<P>(path: P) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>>
-where
-  P: AsRef<Path>,
-{
+pub fn load(path: &str) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>> {
   // Run gltf
   let (doc, buffers, images) = gltf::import(&path)?;
 
