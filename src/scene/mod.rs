@@ -32,7 +32,7 @@ pub struct Scene {
 }
 
 impl Scene {
-  pub(crate) fn load(gltf_scene: gltf::Scene, data: &mut GltfData) -> Self {
+  pub(crate) fn load(gltf_scene: gltf::Scene, data: &mut GltfData, load_materials: bool) -> Self {
     let mut scene = Self::default();
 
     #[cfg(feature = "names")]
@@ -45,18 +45,24 @@ impl Scene {
     }
 
     for node in gltf_scene.nodes() {
-      scene.read_node(&node, &One::one(), data);
+      scene.read_node(&node, &One::one(), data, load_materials);
     }
     scene
   }
 
-  fn read_node(&mut self, node: &Node, parent_transform: &Matrix4<f32>, data: &mut GltfData) {
+  fn read_node(
+    &mut self,
+    node: &Node,
+    parent_transform: &Matrix4<f32>,
+    data: &mut GltfData,
+    load_materials: bool,
+  ) {
     // Compute transform of the current node
     let transform = parent_transform * transform_to_matrix(node.transform());
 
     // Recurse on children
     for child in node.children() {
-      self.read_node(&child, &transform, data);
+      self.read_node(&child, &transform, data, load_materials);
     }
 
     // Load camera
@@ -72,9 +78,14 @@ impl Scene {
     // Load model
     if let Some(mesh) = node.mesh() {
       for (i, primitive) in mesh.primitives().enumerate() {
-        self
-          .models
-          .push(Model::load(&mesh, i, primitive, &transform, data));
+        self.models.push(Model::load(
+          &mesh,
+          i,
+          primitive,
+          &transform,
+          data,
+          load_materials,
+        ));
       }
     }
   }
