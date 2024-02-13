@@ -96,7 +96,7 @@ impl Camera {
   ///
   /// # Example
   /// ```
-  /// # use easy_gltf::Camera;
+  /// # use minetest_gltf::Camera;
   /// # use cgmath::*;
   /// # let cam = Camera::default();
   /// let ray_dir = Vector3::new(1., 0., 0.);

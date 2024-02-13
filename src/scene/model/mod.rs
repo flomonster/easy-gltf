@@ -20,8 +20,8 @@ pub use vertex::*;
 /// to get the geometry of the model.
 ///
 /// ```
-/// # use easy_gltf::*;
-/// # use easy_gltf::model::Mode;
+/// # use minetest_gltf::*;
+/// # use minetest_gltf::model::Mode;
 /// # let model = Model::default();
 /// match model.mode() {
 ///   Mode::Triangles | Mode::TriangleFan | Mode::TriangleStrip => {
@@ -44,8 +44,8 @@ pub use vertex::*;
 /// You will need the vertices and the indices if existing.
 ///
 /// ```
-/// # use easy_gltf::*;
-/// # use easy_gltf::model::Mode;
+/// # use minetest_gltf::*;
+/// # use minetest_gltf::model::Mode;
 /// # let model = Model::default();
 /// let vertices = model. vertices();
 /// let indices = model.indices();

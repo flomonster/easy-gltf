@@ -15,7 +15,7 @@
 //! # Example
 //!
 //! ```
-//! let scenes = easy_gltf::load("tests/cube.glb").expect("Failed to load glTF");
+//! let scenes = minetest_gltf::load("tests/cube.glb").expect("Failed to load glTF");
 //! for scene in scenes {
 //!     println!(
 //!         "Cameras: #{}  Lights: #{}  Models: #{}",
@@ -42,7 +42,7 @@ pub use scene::*;
 /// # Example
 ///
 /// ```
-/// let scenes = easy_gltf::load("tests/cube.glb").expect("Failed to load glTF");
+/// let scenes = minetest_gltf::load("tests/cube.glb").expect("Failed to load glTF");
 /// println!("Scenes: #{}", scenes.len()); // Output "Scenes: #1"
 /// let scene = &scenes[0]; // Retrieve the first and only scene
 /// println!("Cameras: #{}", scene.cameras.len());
@@ -59,7 +59,7 @@ where
   // Init data and collection useful for conversion
   let mut data = GltfData::new(buffers, images, &path);
 
-  // Convert gltf -> easy_gltf
+  // Convert gltf -> minetest_gltf
   let mut res = vec![];
   for scene in doc.scenes() {
     res.push(Scene::load(scene, &mut data));
