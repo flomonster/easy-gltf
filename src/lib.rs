@@ -15,7 +15,7 @@
 //! # Example
 //!
 //! ```
-//! let scenes = minetest_gltf::load("tests/cube.glb").expect("Failed to load glTF");
+//! let scenes = minetest_gltf::load("tests/cube.glb", true).expect("Failed to load glTF");
 //! for scene in scenes {
 //!     println!(
 //!         "Cameras: #{}  Lights: #{}  Models: #{}",
@@ -45,7 +45,7 @@ pub use scene::*;
 /// # Example
 ///
 /// ```
-/// let scenes = minetest_gltf::load("tests/cube.glb").expect("Failed to load glTF");
+/// let scenes = minetest_gltf::load("tests/cube.glb", true).expect("Failed to load glTF");
 /// println!("Scenes: #{}", scenes.len()); // Output "Scenes: #1"
 /// let scene = &scenes[0]; // Retrieve the first and only scene
 /// println!("Cameras: #{}", scene.cameras.len());
@@ -88,7 +88,7 @@ pub fn load(path: &str, load_images: bool) -> Result<Vec<Scene>, Box<dyn Error +
   // Convert gltf -> minetest_gltf
   let mut res = vec![];
   for scene in gltf_data.scenes() {
-    res.push(Scene::load(scene, &mut data));
+    res.push(Scene::load(scene, &mut data, load_images));
   }
   Ok(res)
 }
@@ -241,7 +241,7 @@ mod tests {
   fn check_material() {
     let scenes = load("tests/head.glb", true).unwrap();
     let scene = &scenes[0];
-    let mat = &scene.models[0].material;
+    let mat = &scene.models[0].material.as_ref().unwrap();
     assert!(mat.pbr.base_color_texture.is_some());
     assert_eq!(mat.pbr.metallic_factor, 0.);
   }
