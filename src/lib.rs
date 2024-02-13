@@ -29,7 +29,10 @@
 mod scene;
 mod utils;
 
+use gltf::Gltf;
 use std::error::Error;
+use std::fs::File;
+use std::io::BufReader;
 use std::path::Path;
 use utils::GltfData;
 
@@ -51,6 +54,27 @@ pub use scene::*;
 /// ```
 pub fn load(path: &str) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>> {
   // Run gltf
+
+  // We need the base path for the GLTF lib. We want to choose if we load materials/textures.
+  let base = Path::new(path).parent().unwrap_or_else(|| Path::new("./"));
+
+  // The buffer we're going to read the model into.
+  let model_reader = match read_path_to_buf_read(path) {
+    Ok(model_reader) => model_reader,
+    Err(e) => panic!("GLTFLoader: {}", e),
+  };
+
+  // Now we need to get the "Document" from the GLTF lib.
+  let gltf_data = match Gltf::from_reader(model_reader) {
+    Ok(data) => data,
+    Err(e) => panic!("{}", e),
+  };
+
+  // We're going to do some manual integration here.
+
+  // We always want the buffer data. We have to clone this, it's basically ripping out ownership from our hands.
+  let buffers = gltf::import_buffers(&gltf_data.clone(), Some(base), gltf_data.blob.clone())?;
+
   let (doc, buffers, images) = gltf::import(&path)?;
 
   // Init data and collection useful for conversion
@@ -58,10 +82,20 @@ pub fn load(path: &str) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>> {
 
   // Convert gltf -> minetest_gltf
   let mut res = vec![];
-  for scene in doc.scenes() {
+  for scene in gltf_data.scenes() {
     res.push(Scene::load(scene, &mut data));
   }
   Ok(res)
+}
+
+///
+/// Automatically parse a file path into a BufReader<File>.
+///
+fn read_path_to_buf_read(path: &str) -> Result<BufReader<File>, String> {
+  match File::open(path) {
+    Ok(file) => Ok(BufReader::new(file)),
+    Err(e) => Err(format!("Path to BufReader failure. {}", e)),
+  }
 }
 
 #[cfg(test)]
