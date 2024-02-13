@@ -59,10 +59,7 @@ pub fn load(path: &str, load_images: bool) -> Result<Vec<Scene>, Box<dyn Error +
   let base = Path::new(path).parent().unwrap_or_else(|| Path::new("./"));
 
   // The buffer we're going to read the model into.
-  let model_reader = match read_path_to_buf_read(path) {
-    Ok(model_reader) => model_reader,
-    Err(e) => panic!("GLTFLoader: {}", e),
-  };
+  let model_reader = read_path_to_buf_read(path)?;
 
   // Now we need to get the "Document" from the GLTF lib.
   let gltf_data = match Gltf::from_reader(model_reader) {
@@ -81,7 +78,7 @@ pub fn load(path: &str, load_images: bool) -> Result<Vec<Scene>, Box<dyn Error +
       &gltf_data.clone(),
       Some(base),
       &buffers,
-    )),
+    )?),
     false => None,
   };
 
@@ -122,7 +119,7 @@ mod tests {
 
   #[test]
   fn load_snowman() {
-    let scenes = match load("tests/snowman.gltf") {
+    let scenes = match load("tests/snowman.gltf", false) {
       Ok(scenes) => {
         println!("Snowman loaded!");
         scenes
@@ -133,7 +130,7 @@ mod tests {
 
   #[test]
   fn check_cube_glb() {
-    let scenes = load("tests/cube.glb").unwrap();
+    let scenes = load("tests/cube.glb", true).unwrap();
     assert_eq!(scenes.len(), 1);
     let scene = &scenes[0];
     assert_eq!(scene.cameras.len(), 1);
@@ -143,7 +140,7 @@ mod tests {
 
   #[test]
   fn check_different_meshes() {
-    let scenes = load("tests/complete.glb").unwrap();
+    let scenes = load("tests/complete.glb", true).unwrap();
     assert_eq!(scenes.len(), 1);
     let scene = &scenes[0];
     for model in scene.models.iter() {
@@ -163,17 +160,17 @@ mod tests {
 
   #[test]
   fn check_cube_gltf() {
-    let _ = load("tests/cube_classic.gltf").unwrap();
+    let _ = load("tests/cube_classic.gltf", true).unwrap();
   }
 
   #[test]
   fn check_default_texture() {
-    let _ = load("tests/box_sparse.glb").unwrap();
+    let _ = load("tests/box_sparse.glb", true).unwrap();
   }
 
   #[test]
   fn check_camera() {
-    let scenes = load("tests/cube.glb").unwrap();
+    let scenes = load("tests/cube.glb", true).unwrap();
     let scene = &scenes[0];
     let cam = &scene.cameras[0];
     assert!((cam.position() - Vector3::new(7.3589, 4.9583, 6.9258)).magnitude() < 0.1);
@@ -181,7 +178,7 @@ mod tests {
 
   #[test]
   fn check_lights() {
-    let scenes = load("tests/cube.glb").unwrap();
+    let scenes = load("tests/cube.glb", true).unwrap();
     let scene = &scenes[0];
     for light in scene.lights.iter() {
       match light {
@@ -223,7 +220,7 @@ mod tests {
 
   #[test]
   fn check_model() {
-    let scenes = load("tests/cube.glb").unwrap();
+    let scenes = load("tests/cube.glb", true).unwrap();
     let scene = &scenes[0];
     let model = &scene.models[0];
     assert!(model.has_normals());
@@ -242,7 +239,7 @@ mod tests {
 
   #[test]
   fn check_material() {
-    let scenes = load("tests/head.glb").unwrap();
+    let scenes = load("tests/head.glb", true).unwrap();
     let scene = &scenes[0];
     let mat = &scene.models[0].material;
     assert!(mat.pbr.base_color_texture.is_some());
@@ -251,6 +248,6 @@ mod tests {
 
   #[test]
   fn check_invalid_path() {
-    assert!(load("tests/invalid.glb").is_err());
+    assert!(load("tests/invalid.glb", true).is_err());
   }
 }
