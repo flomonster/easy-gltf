@@ -74,7 +74,7 @@ pub struct Model {
   pub(crate) vertices: Vec<Vertex>,
   pub(crate) indices: Option<Vec<u32>>,
   pub(crate) mode: Mode,
-  pub(crate) material: Arc<Material>,
+  pub(crate) material: Option<Arc<Material>>,
   pub(crate) has_normals: bool,
   pub(crate) has_tangents: bool,
   pub(crate) has_tex_coords: bool,
@@ -110,7 +110,10 @@ impl Model {
 
   /// Material to apply to the whole model.
   pub fn material(&self) -> Arc<Material> {
-    self.material.clone()
+    match self.material {
+      Some(material) => material.clone(),
+      None => panic!("minetest-gltf: Attempted to unwrap None material."),
+    }
   }
 
   /// List of raw `vertices` of the model. You might have to use the `indices`
@@ -277,6 +280,7 @@ impl Model {
     primitive: gltf::Primitive,
     transform: &Matrix4<f32>,
     data: &mut GltfData,
+    load_materials: bool,
   ) -> Self {
     #[cfg(not(feature = "names"))]
     {
@@ -330,6 +334,11 @@ impl Model {
       false
     };
 
+    let material = match load_materials {
+      true => Some(Material::load(primitive.material(), data)),
+      false => None,
+    };
+
     Model {
       #[cfg(feature = "names")]
       mesh_name: mesh.name().map(String::from),
@@ -340,7 +349,7 @@ impl Model {
       primitive_index,
       vertices,
       indices,
-      material: Material::load(primitive.material(), data),
+      material,
       mode: primitive.mode().into(),
       has_normals,
       has_tangents,
