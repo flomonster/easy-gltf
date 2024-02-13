@@ -1,0 +1,4 @@
+{
+  // rust
+  "rust-analyzer.check.command": "clippy",
+}
