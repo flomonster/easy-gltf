@@ -1,5 +1,5 @@
 <h1 align="center">
-    easy-gltf
+    minetest-gltf
 </h1>
 <p align="center">
    <a href="https://github.com/jordan4ibanez/minetest-gltf/actions">
@@ -18,6 +18,8 @@ This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a file 
 
 It's based on the [gltf](https://github.com/gltf-rs/gltf) crate but has an easy to use output.
 
+This crate was originally [easy-gltf](https://crates.io/crates/easy-gltf).
+
 This crate has been completely modified for the minetest-rust engine.
 
 ### Installation
@@ -26,7 +28,7 @@ To install it, just add the dependency in your `Cargo.toml`.
 
 ```toml
 [dependencies]
-minetest-gltf="1.1.2"
+minetest-gltf="1.1.3"
 ```
 
 ### Usage
