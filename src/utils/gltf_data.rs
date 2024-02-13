@@ -10,7 +10,7 @@ use std::sync::Arc;
 /// Helps to simplify the signature of import related functions.
 pub struct GltfData {
   pub buffers: Vec<gltf::buffer::Data>,
-  pub images: Vec<gltf::image::Data>,
+  pub images: Option<Vec<gltf::image::Data>>,
   pub base_dir: PathBuf,
   pub materials: HashMap<Option<usize>, Arc<Material>>,
   pub rgb_images: HashMap<usize, Arc<RgbImage>>,
@@ -19,7 +19,11 @@ pub struct GltfData {
 }
 
 impl GltfData {
-  pub fn new<P>(buffers: Vec<gltf::buffer::Data>, images: Vec<gltf::image::Data>, path: P) -> Self
+  pub fn new<P>(
+    buffers: Vec<gltf::buffer::Data>,
+    images: Option<Vec<gltf::image::Data>>,
+    path: P,
+  ) -> Self
   where
     P: AsRef<Path>,
   {
