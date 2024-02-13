@@ -82,6 +82,17 @@ mod tests {
   }
 
   #[test]
+  fn load_snowman() {
+    let scenes = match load("tests/snowman.gltf") {
+      Ok(scenes) => {
+        println!("Snowman loaded!");
+        scenes
+      }
+      Err(e) => panic!("Snowman failed: {}", e),
+    };
+  }
+
+  #[test]
   fn check_cube_glb() {
     let scenes = load("tests/cube.glb").unwrap();
     assert_eq!(scenes.len(), 1);
