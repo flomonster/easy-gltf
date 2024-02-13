@@ -33,4 +33,4 @@ minetest-gltf="1.1.4"
 
 ### Usage
 
-For examples of use see the [crate documentation](https://docs.rs/easy-gltf).
+For examples of use see the [crate documentation](https://docs.rs/minetest-gltf).
