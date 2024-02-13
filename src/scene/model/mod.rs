@@ -110,7 +110,7 @@ impl Model {
 
   /// Material to apply to the whole model.
   pub fn material(&self) -> Arc<Material> {
-    match self.material {
+    match &self.material {
       Some(material) => material.clone(),
       None => panic!("minetest-gltf: Attempted to unwrap None material."),
     }
