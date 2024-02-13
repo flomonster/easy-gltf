@@ -52,10 +52,10 @@ pub use scene::*;
 /// println!("Lights: #{}", scene.lights.len());
 /// println!("Models: #{}", scene.models.len());
 /// ```
-pub fn load(path: &str) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>> {
+pub fn load(path: &str, load_images: bool) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>> {
   // Run gltf
 
-  // We need the base path for the GLTF lib. We want to choose if we load materials/textures.
+  // We need the base path for the GLTF lib. We want to choose if we load textures.
   let base = Path::new(path).parent().unwrap_or_else(|| Path::new("./"));
 
   // The buffer we're going to read the model into.
@@ -75,7 +75,15 @@ pub fn load(path: &str) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>> {
   // We always want the buffer data. We have to clone this, it's basically ripping out ownership from our hands.
   let buffers = gltf::import_buffers(&gltf_data.clone(), Some(base), gltf_data.blob.clone())?;
 
-  let (doc, buffers, images) = gltf::import(&path)?;
+  // But we only want the image data if the programmer wants it.
+  let images = match load_images {
+    true => Some(gltf::import_images(
+      &gltf_data.clone(),
+      Some(base),
+      &buffers,
+    )),
+    false => None,
+  };
 
   // Init data and collection useful for conversion
   let mut data = GltfData::new(buffers, images, &path);
