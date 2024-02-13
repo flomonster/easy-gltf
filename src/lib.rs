@@ -85,7 +85,7 @@ pub fn load(path: &str, load_materials: bool) -> Result<Vec<Scene>, Box<dyn Erro
   };
 
   // Init data and collection useful for conversion
-  let mut data = GltfData::new(buffers, images, &path);
+  let mut data = GltfData::new(buffers, images, path);
 
   // Convert gltf -> minetest_gltf
   let mut res = vec![];
