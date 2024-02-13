@@ -126,6 +126,8 @@ mod tests {
       }
       Err(e) => panic!("Snowman failed: {}", e),
     };
+
+    assert_eq!(scenes.first().unwrap().models.len(), 5);
   }
 
   #[test]
