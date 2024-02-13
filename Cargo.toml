@@ -1,8 +1,8 @@
 [package]
 name = "minetest-gltf"
-version = "1.1.1"
+version = "1.1.2"
 authors = ["Florian Amsallem <florian.amsallem@epita.fr>", "jordan4ibanez"]
-description = "glTF 2.0 loader with an easy to use output"
+description = "glTF 2.0 loader with an easy to use output. Modified extensively for the minetest-rust engine."
 edition = "2021"
 license = "MIT"
 keywords = ["glTF", "3D", "asset", "model", "minetest"]

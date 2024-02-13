@@ -2,14 +2,14 @@
     easy-gltf
 </h1>
 <p align="center">
-   <a href="https://github.com/flomonster/easy-gltf/actions">
-      <img src="https://github.com/flomonster/easy-gltf/workflows/Build/badge.svg" alt="github">
+   <a href="https://github.com/jordan4ibanez/minetest-gltf/actions">
+      <img src="https://github.com/flomonster/minetest-gltf/workflows/Build/badge.svg" alt="github">
    </a>
-   <a href="https://crates.io/crates/easy-gltf">
-      <img src="https://img.shields.io/crates/v/easy-gltf.svg" alt="crates.io">
+   <a href="https://crates.io/crates/minetest-gltf">
+      <img src="https://img.shields.io/crates/v/minetest-gltf.svg" alt="crates.io">
    </a>
-   <a href="https://docs.rs/easy-gltf">
-      <img src="https://docs.rs/easy-gltf/badge.svg" alt="docs.rs">
+   <a href="https://docs.rs/minetest-gltf">
+      <img src="https://docs.rs/minetest-gltf/badge.svg" alt="docs.rs">
    </a>
 </p>
 <hr>
@@ -18,7 +18,7 @@ This crate is intended to load [glTF 2.0](https://www.khronos.org/gltf), a file 
 
 It's based on the [gltf](https://github.com/gltf-rs/gltf) crate but has an easy to use output.
 
-This crate is perfect for your rendering projects (raytracer, OpenGL, rasterizer...).
+This crate has been completely modified for the minetest-rust engine.
 
 ### Installation
 
@@ -26,7 +26,7 @@ To install it, just add the dependency in your `Cargo.toml`.
 
 ```toml
 [dependencies]
-easy-gltf="1.1.1"
+minetest-gltf="1.1.2"
 ```
 
 ### Usage
