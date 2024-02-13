@@ -40,6 +40,8 @@ pub use scene::*;
 
 /// Load scenes from path to a glTF 2.0.
 ///
+/// You can choose to enable material loading.
+///
 /// Note: You can use this function with either a `Gltf` (standard `glTF`) or `Glb` (binary glTF).
 ///
 /// # Example
@@ -52,7 +54,7 @@ pub use scene::*;
 /// println!("Lights: #{}", scene.lights.len());
 /// println!("Models: #{}", scene.models.len());
 /// ```
-pub fn load(path: &str, load_images: bool) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>> {
+pub fn load(path: &str, load_materials: bool) -> Result<Vec<Scene>, Box<dyn Error + Send + Sync>> {
   // Run gltf
 
   // We need the base path for the GLTF lib. We want to choose if we load textures.
@@ -73,7 +75,7 @@ pub fn load(path: &str, load_images: bool) -> Result<Vec<Scene>, Box<dyn Error +
   let buffers = gltf::import_buffers(&gltf_data.clone(), Some(base), gltf_data.blob.clone())?;
 
   // But we only want the image data if the programmer wants it.
-  let images = match load_images {
+  let images = match load_materials {
     true => Some(gltf::import_images(
       &gltf_data.clone(),
       Some(base),
@@ -88,7 +90,7 @@ pub fn load(path: &str, load_images: bool) -> Result<Vec<Scene>, Box<dyn Error +
   // Convert gltf -> minetest_gltf
   let mut res = vec![];
   for scene in gltf_data.scenes() {
-    res.push(Scene::load(scene, &mut data, load_images));
+    res.push(Scene::load(scene, &mut data, load_materials));
   }
   Ok(res)
 }
