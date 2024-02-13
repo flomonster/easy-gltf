@@ -10,24 +10,24 @@ pub type Line = [Vertex; 2];
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vertex {
-    /// Position
-    pub position: Vector3<f32>,
-    /// Normalized normal
-    pub normal: Vector3<f32>,
-    /// Tangent normal
-    /// The w component is the handedness of the tangent basis (can be -1 or 1)
-    pub tangent: Vector4<f32>,
-    /// Texture coordinates
-    pub tex_coords: Vector2<f32>,
+  /// Position
+  pub position: Vector3<f32>,
+  /// Normalized normal
+  pub normal: Vector3<f32>,
+  /// Tangent normal
+  /// The w component is the handedness of the tangent basis (can be -1 or 1)
+  pub tangent: Vector4<f32>,
+  /// Texture coordinates
+  pub tex_coords: Vector2<f32>,
 }
 
 impl Default for Vertex {
-    fn default() -> Self {
-        Vertex {
-            position: Zero::zero(),
-            normal: Zero::zero(),
-            tangent: Zero::zero(),
-            tex_coords: Zero::zero(),
-        }
+  fn default() -> Self {
+    Vertex {
+      position: Zero::zero(),
+      normal: Zero::zero(),
+      tangent: Zero::zero(),
+      tex_coords: Zero::zero(),
     }
+  }
 }
