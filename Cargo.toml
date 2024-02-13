@@ -1,14 +1,11 @@
 [package]
-name = "easy-gltf"
+name = "minetest-gltf"
 version = "1.1.1"
-authors = ["Florian Amsallem <florian.amsallem@epita.fr>"]
+authors = ["Florian Amsallem <florian.amsallem@epita.fr>", "jordan4ibanez"]
 description = "glTF 2.0 loader with an easy to use output"
-documentation = "https://docs.rs/easy-gltf"
-repository = "https://github.com/flomonster/easy-gltf"
-homepage = "https://github.com/flomonster/easy-gltf"
-edition = "2018"
+edition = "2021"
 license = "MIT"
-keywords = ["glTF", "3D", "asset", "model", "scene"]
+keywords = ["glTF", "3D", "asset", "model", "minetest"]
 exclude = [".github/"]
 
 [features]
