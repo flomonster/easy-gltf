@@ -19,6 +19,9 @@ pub struct Vertex {
     pub tangent: Vector4<f32>,
     /// Texture coordinates
     pub tex_coords: Vector2<f32>,
+    /// Vertex color, known to be compatible with Blender 4 exported models
+    #[cfg(feature = "vertex-color")]
+    pub color: Vector4<u16>, // Blender exported glTF uses componentType 5123 (UNSIGNED_SHORT)
 }
 
 impl Default for Vertex {
@@ -28,6 +31,8 @@ impl Default for Vertex {
             normal: Zero::zero(),
             tangent: Zero::zero(),
             tex_coords: Zero::zero(),
+            #[cfg(feature = "vertex-color")]
+            color: Vector4::new(0, 0, 0, 0),
         }
     }
 }
