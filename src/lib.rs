@@ -92,6 +92,16 @@ mod tests {
     }
 
     #[test]
+    fn check_cube_glb_with_color() {
+        let scenes = load("tests/cube_color.glb").unwrap();
+        assert_eq!(scenes.len(), 1);
+        let scene = &scenes[0];
+        assert_eq!(scene.models.len(), 1);
+        assert!(scene.models[0].has_colors());
+        assert_eq!(scene.models[0].indices().unwrap().len(), 36);
+    }
+
+    #[test]
     fn check_different_meshes() {
         let scenes = load("tests/complete.glb").unwrap();
         assert_eq!(scenes.len(), 1);

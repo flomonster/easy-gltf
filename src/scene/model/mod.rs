@@ -78,6 +78,8 @@ pub struct Model {
     pub(crate) has_normals: bool,
     pub(crate) has_tangents: bool,
     pub(crate) has_tex_coords: bool,
+    #[cfg(feature = "vertex-color")]
+    pub(crate) has_colors: bool,
 }
 
 impl Model {
@@ -253,6 +255,16 @@ impl Model {
         self.has_tex_coords
     }
 
+    /// Indicate if the vertices contains color information.
+    /// Requires the `vertex-color` feature.
+    ///
+    /// **Note**: If this function return `false` all vertices has a color field
+    /// initialized to `1`.
+    #[cfg(feature = "vertex-color")]
+    pub fn has_colors(&self) -> bool {
+        self.has_colors
+    }
+
     fn apply_transform_position(pos: [f32; 3], transform: &Matrix4<f32>) -> Vector3<f32> {
         let pos = Vector4::new(pos[0], pos[1], pos[2], 1.);
         let res = transform * pos;
@@ -330,6 +342,17 @@ impl Model {
             false
         };
 
+        // Colors
+        #[cfg(feature = "vertex-color")]
+        let has_colors = if let Some(colors) = reader.read_colors(0) {
+            for (i, color) in colors.into_rgba_u16().enumerate() {
+                vertices[i].color = Vector4::from(color);
+            }
+            true
+        } else {
+            false
+        };
+
         Model {
             #[cfg(feature = "names")]
             mesh_name: mesh.name().map(String::from),
@@ -345,6 +368,8 @@ impl Model {
             has_normals,
             has_tangents,
             has_tex_coords,
+            #[cfg(feature = "vertex-color")]
+            has_colors,
         }
     }
 }

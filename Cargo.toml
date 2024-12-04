@@ -1,7 +1,7 @@
 [package]
 name = "easy-gltf"
-version = "1.1.2"
-authors = ["Florian Amsallem <florian.amsallem@epita.fr>"]
+version = "1.1.3"
+authors = ["Florian Amsallem <florian.amsallem@epita.fr>", "Chuigda Whitegive <icey@icey.tech>"]
 description = "glTF 2.0 loader with an easy to use output"
 documentation = "https://docs.rs/easy-gltf"
 repository = "https://github.com/flomonster/easy-gltf"
@@ -13,11 +13,12 @@ exclude = [".github/"]
 
 [features]
 default = []
+vertex-color = []
 names = ["gltf/names"]
 extras = ["gltf/extras"]
 
 [dependencies]
 cgmath = "0.18.0"
-gltf = { version = "1.4.0", features = ["KHR_lights_punctual"] }
-image = "0.25.0"
+gltf = { version = "1.4.1", features = ["KHR_lights_punctual"] }
+image = { version = "0.25.0", default-features = false, features = ["jpeg", "png"]}
 base64 = "0.22.0"
