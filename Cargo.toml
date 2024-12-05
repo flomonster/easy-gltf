@@ -20,5 +20,5 @@ extras = ["gltf/extras"]
 [dependencies]
 cgmath = "0.18.0"
 gltf = { version = "1.4.1", features = ["KHR_lights_punctual"] }
-image = { version = "0.25.0", default-features = false, features = ["jpeg", "png"]}
+image = { version = "0.25.0", default-features = false, features = ["jpeg", "png"] }
 base64 = "0.22.0"
