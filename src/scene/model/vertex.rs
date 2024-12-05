@@ -32,7 +32,7 @@ impl Default for Vertex {
             tangent: Zero::zero(),
             tex_coords: Zero::zero(),
             #[cfg(feature = "vertex-color")]
-            color: Vector4::new(0, 0, 0, 0),
+            color: Vector4::new(1, 1, 1, 1),
         }
     }
 }
