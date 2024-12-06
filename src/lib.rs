@@ -47,10 +47,10 @@ where
     P: AsRef<Path>,
 {
     // Run gltf
-    let (doc, buffers, images) = gltf::import(&path)?;
+    let (doc, buffers, _images) = gltf::import(&path)?;
 
     // Init data and collection useful for conversion
-    let mut data = GltfData::new(buffers, images, &path);
+    let mut data = GltfData::new(buffers, &path);
 
     // Convert gltf -> easy_gltf
     let mut res = vec![];
