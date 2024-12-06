@@ -5,13 +5,6 @@
 //!
 //! It's base on [gltf](https://github.com/gltf-rs/gltf) crate but has an easy to use output.
 //!
-//! # Installation
-//!
-//! ```toml
-//! [dependencies]
-//! easy-gltf="1.1.2"
-//! ```
-//!
 //! # Example
 //!
 //! ```

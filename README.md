@@ -20,14 +20,13 @@ It's based on the [gltf](https://github.com/gltf-rs/gltf) crate but has an easy 
 
 This crate is perfect for your rendering projects (raytracer, OpenGL, rasterizer...).
 
-### Installation
+### Features
 
-To install it, just add the dependency in your `Cargo.toml`.
+Here are the supported features of the crates:
 
-```toml
-[dependencies]
-easy-gltf="1.1.2"
-```
+- `extras`: Retrieve all metadata json information
+- `names`: Retrieve names of objects
+- `vertex-color`: Retrieve vertex color information
 
 ### Usage
 
