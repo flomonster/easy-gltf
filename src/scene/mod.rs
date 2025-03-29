@@ -5,8 +5,8 @@ mod light;
 /// Check [Model](struct.Model.html) for more information about how to use this module.
 pub mod model;
 
-use crate::utils::transform_to_matrix;
 use crate::GltfData;
+use crate::utils::transform_to_matrix;
 pub use camera::{Camera, Projection};
 pub use light::Light;
 pub use model::{Material, Model};
